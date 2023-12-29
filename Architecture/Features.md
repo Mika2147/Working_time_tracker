@@ -1,0 +1,12 @@
+# Planned Features
+- Enter Work Day and persist data
+    - Starting Time
+    - End Time
+    - Break Duration
+- View old entries
+    - List with entries per Month
+    - Export to Excel File
+- Enter and View Vacation
+    - Request new Vacation
+    - View pending requests 
+    - Allow or Deny Requests (if Admin Role)
