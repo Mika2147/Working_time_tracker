@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
+import NavigationBar from './NavigationBar';
 
 class App extends Component {
     state = {  } 
     render() { 
-        return (<div>Hello World</div>);
+        return <React.Fragment>
+            <NavigationBar/>
+        </React.Fragment>
     }
 }
  
