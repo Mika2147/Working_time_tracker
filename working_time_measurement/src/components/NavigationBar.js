@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
+import { Navbar, Container, Nav, Button } from 'react-bootstrap';
 
 class NavigationBar extends Component {
     state = {  } 
@@ -14,7 +14,7 @@ class NavigationBar extends Component {
               <Nav.Link href="/">Vacation</Nav.Link>
             </Nav>
             <Nav>
-              <button className="btn btn-danger" href="/">Logout</button>
+              <Button variant="danger" href="/">Logout</Button>
             </Nav>
           </Navbar.Collapse>
         </Container>
