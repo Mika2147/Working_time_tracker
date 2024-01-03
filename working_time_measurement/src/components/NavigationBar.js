@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Navbar, Container, Nav, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 class NavigationBar extends Component {
     state = {  } 
@@ -10,8 +11,12 @@ class NavigationBar extends Component {
           <Navbar.Toggle aria-controls="navbarSupportedContent" />
           <Navbar.Collapse id="navbarSupportedContent">
             <Nav className="me-auto">
-              <Nav.Link href="/">Time Measurement</Nav.Link>
-              <Nav.Link href="/">Vacation</Nav.Link>
+              <Link to="/time-measurement" className="link">
+                <Nav.Link href="/">Time Measurement</Nav.Link>
+              </Link>
+              <Link to="/vacation" className="link">
+                <Nav.Link href="/">Vacation</Nav.Link>
+              </Link>
             </Nav>
             <Nav>
               <Button variant="danger" href="/">Logout</Button>

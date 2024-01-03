@@ -16,3 +16,15 @@
     padding-left: 32px;
     padding-top: 32px;
 }
+
+.page-title{
+    font-size: 30px;
+}
+
+.form-subtitle{
+    font-size: 20px;
+}
+
+.link{
+    text-decoration: inherit;
+}
