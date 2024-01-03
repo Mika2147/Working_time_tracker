@@ -1,0 +1,19 @@
+.card-container{
+    display: flex;
+    gap: 32px;
+    padding-left: 32px;
+    padding-right: 32px;
+    padding-top: 10px;
+}
+
+@media (max-width: 850px) {
+    .card-container{
+        flex-direction: column;
+    }
+}
+
+.main-container{
+    display: flex;
+    gap: 32px;
+    padding-right: 32px;
+}
