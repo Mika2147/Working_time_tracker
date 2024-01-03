@@ -28,3 +28,11 @@
 .link{
     text-decoration: inherit;
 }
+
+.central_alignment{
+    align-items: center;
+}
+
+.year_label{
+    font-size: 20px;
+}
