@@ -7,7 +7,7 @@ class TimeMeasurementStart extends Component {
         return (<React.Fragment>
                     <div className="main-container">
                         <div className="card-container">
-                            <TimeMeasurementCard title="Today" text="Enter the time you worked today" buttonTitle="Go"/>
+                            <TimeMeasurementCard title="Today" text="Enter the time you worked today" buttonTitle="Go" link="/new-entry"/>
                             <TimeMeasurementCard title="This Month" text="Look at the time your worked this month" buttonTitle="Go"/>
                             <TimeMeasurementCard title="Export" text="Export current Month" buttonTitle="Go"/>
                         </div>
