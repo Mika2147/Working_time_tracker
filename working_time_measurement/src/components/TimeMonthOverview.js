@@ -14,7 +14,6 @@ class TimeMonthOverview extends Component {
      }
 
      componentDidMount(){
-        debugger;
         var url = "http://localhost:8080/time";
         if (this.props.month !== undefined){
             url = url + "?month=" + this.props.month
