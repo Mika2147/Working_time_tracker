@@ -8,24 +8,46 @@ import { Stack } from 'react-bootstrap';
 
 class TimeMonthOverview extends Component {
     state = { 
-        items: [
-            {
-                date: "02.01.2024", 
-                starting_time: "08:00",
-                end_time: "17:00",
-                break_duration: "60",
-                total_working_time: "8:00"
-            },
-            {
-                date: "03.01.2024", 
-                starting_time: "08:05",
-                end_time: "17:30",
-                break_duration: "50",
-                total_working_time: "8:35"
-            }
-        ]
+        error: null,
+        isLoaded: false,
+        items: []
      }
 
+     componentDidMount(){
+        debugger;
+        var url = "http://localhost:8080/time";
+        if (this.props.month !== undefined){
+            url = url + "?month=" + this.props.month
+        }
+        const requestOptions = {
+            method: 'GET',
+            headers: { 
+                'Content-Type': 'application/json',
+            },
+        };
+
+        fetch(url, requestOptions)
+        .then(res => res.json())
+        .then(
+        (result) => {
+          this.setState({
+            isLoaded: true,
+            items: result.items
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      )
+     }
+
+     /* TODO: 
+            - Table Rows should be links to a view that edits the date
+            - Load all Data From Backend with HTTP Request
+     */
     render() { 
         return (<React.Fragment>
             <div className='main-container'>
@@ -40,13 +62,13 @@ class TimeMonthOverview extends Component {
                             <th>Total Working Time</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody> 
                     {this.state.items.map(item => <tr>
                             <td>{item.date}</td>
-                            <td>{item.starting_time}</td>
-                            <td>{item.end_time}</td>
-                            <td>{item.break_duration}</td>
-                            <td>{item.total_working_time}</td>
+                            <td>{item.startingTime}</td>
+                            <td>{item.endTime}</td>
+                            <td>{item.breakDuration}</td>
+                            <td>{item.totalWorkingTime}</td>
                             </tr>)}
                     </tbody>
                 </Table>
