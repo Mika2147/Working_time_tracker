@@ -44,8 +44,7 @@ class TimeMonthOverview extends Component {
      }
 
      /* TODO: 
-            - Table Rows should be links to a view that edits the date
-            - Load all Data From Backend with HTTP Request
+        - Table Rows should be links to a view that edits the date
      */
     render() { 
         return (<React.Fragment>
