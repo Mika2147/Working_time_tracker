@@ -48,6 +48,17 @@ public class WorkDay {
         this.breakDuration = breakDuration;
     }
 
+    public WorkDay(int day, int month, int year, int startingHour, int startingMinute, int endHour, int endMinute, int breakDuration) {
+        this.day = day;
+        this.month = month;
+        this.year = year;
+        this.startingHour = startingHour;
+        this.startingMinute = startingMinute;
+        this.endHour = endHour;
+        this.endMinute = endMinute;
+        this.breakDuration = breakDuration;
+    }
+
     public String getDate() {
         String dateString = String.format("%02d.%02d.%04d", this.day, this.month, this.year);
         return dateString;

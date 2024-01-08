@@ -1,7 +1,5 @@
 package com.mikaauer.workingtimemeasurement.WorkDay;
 
-import com.mikaauer.workingtimemeasurement.WorkDay.WorkDay;
-
 import java.util.List;
 
 public class WorkDayResponse {
