@@ -10,13 +10,19 @@ class TimeMonthOverview extends Component {
     state = { 
         error: null,
         isLoaded: false,
-        items: []
+        items: [],
+        month: ((new Date()).getMonth() + 1),
+        year: (new Date()).getFullYear(),
      }
 
      componentDidMount(){
+        this.fetchEntries();
+     }
+
+    fetchEntries(){
         var url = "http://localhost:8080/time";
-        if (this.props.month !== undefined){
-            url = url + "?month=" + this.props.month
+        if (this.state.month !== undefined){
+            url = url + "?month=" + this.state.month
         }
         const requestOptions = {
             method: 'GET',
@@ -41,7 +47,7 @@ class TimeMonthOverview extends Component {
           });
         }
       )
-     }
+    }
 
      /* TODO: 
         - Table Rows should be links to a view that edits the date
@@ -70,7 +76,12 @@ class TimeMonthOverview extends Component {
                             </tr>)}
                     </tbody>
                 </Table>
-                <MonthPagination/>
+                <MonthPagination month={this.state.month} year={this.state.year} callback={(month) => {
+                    let state = this.state;
+                    state.month = month;
+                    this.setState(state);
+                    this.fetchEntries();
+                }}/>
                 </Stack>
             </div>
         </React.Fragment>);
