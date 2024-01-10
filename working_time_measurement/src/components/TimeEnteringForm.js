@@ -5,23 +5,23 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { useHistory, useNavigate } from 'react-router-dom';
 
 class TimeEnteringForm extends Component {
-    state = { 
-        date: "05.01.2024",
-        startingHour: "8",
-        startingMinute: "00",
-        endHour: "17",
-        endMinute: "00",
-        breakDuration: "60",
+    state = {
+        date: (this.props.date != undefined ? this.props.date :((new Date()).toLocaleDateString())),
+        startingHour: (this.props.startingHour != undefined ? this.props.startingHour :((new Date()).getHours()).toString()),
+        startingMinute: (this.props.startingMinute != undefined ? this.props.startingMinute :((new Date()).getMinutes()).toString()),
+        endHour: (this.props.endHour != undefined ? this.props.endHour :((new Date()).getHours()).toString()),
+        endMinute: (this.props.endMinute != undefined ? this.props.endMinute :((new Date()).getMinutes()).toString()),
+        breakDuration: (this.props.breakDuration != undefined ? this.props.breakDuration : "0"),
         error: {
             date: false,
             startingHour: false,
             startingMinute: false,
             endHour: false,
             endMinute: false,
-            breakDuration: false
+            breakDuration: false,
         }
-     }
-     
+    }
+    
     submitEntry = (navigation) => {
         if(this.state.error.date){
             return;
@@ -120,8 +120,9 @@ class TimeEnteringForm extends Component {
     }
 
     searchFormErrors = (state) => {
+        debugger;
         let date = state.date;
-        var dateRegex = /^(\d{2}).(\d{2}).(\d{4})$/;
+        var dateRegex = /^(\d{1,2}).(\d{1,2}).(\d{4})$/;
 
         if (!dateRegex.test(date)){
             state.error.date = true;

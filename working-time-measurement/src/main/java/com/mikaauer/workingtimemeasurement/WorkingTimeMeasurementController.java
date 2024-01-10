@@ -25,21 +25,18 @@ public class WorkingTimeMeasurementController {
     @GetMapping()
     public ResponseEntity<WorkDayResponse> handleMonthOverviewRequest(@RequestParam(value = "month") Optional<String> month,
                                                                       @RequestParam(value = "year") Optional<String> year) {
-        int localMonth = 0;
-        int localYear = 0;
 
         LocalDate now = LocalDate.now();
 
+        int localMonth = now.getMonthValue();
+        int localYear = now.getYear();
+
         if(month.isPresent()){
             localMonth = Integer.parseInt(month.get());
-        }else {
-            localMonth = now.getMonthValue();
         }
 
         if(year.isPresent()){
             localYear = Integer.parseInt(year.get());
-        }else{
-            localYear = now.getYear();
         }
 
         List<WorkDay> workDays = databaseConnector.getWorkdays(localMonth, localYear);
@@ -53,6 +50,39 @@ public class WorkingTimeMeasurementController {
                 .body(response);
 
         return entity;
+    }
+
+    @GetMapping
+    @RequestMapping("/day")
+    public ResponseEntity<WorkDay> handleDayOverviewRequest(@RequestParam(value="day")Optional<Integer> day,
+                                                            @RequestParam(value="month")Optional<Integer> month,
+                                                            @RequestParam(value="year")Optional<Integer> year){
+
+        LocalDate now = LocalDate.now();
+
+        int localDay = now.getDayOfMonth();
+        int localMonth = now.getMonthValue();
+        int localYear = now.getYear();
+
+        if(day.isPresent()){
+            localDay = day.get();
+        }
+
+        if(month.isPresent()){
+            localMonth = month.get();
+        }
+
+        if(year.isPresent()){
+            localYear = year.get();
+        }
+
+        Optional<WorkDay> workday = databaseConnector.getWorkday(localDay, localMonth, localYear);
+
+        if(workday.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(workday.get());
     }
 
     @PostMapping(consumes = "application/json")
