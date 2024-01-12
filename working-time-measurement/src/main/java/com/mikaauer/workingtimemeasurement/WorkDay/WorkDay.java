@@ -22,7 +22,7 @@ public class WorkDay {
     private int breakDuration;
 
     public WorkDay(String date, String startingTime, String endTime, int breakDuration) {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.GERMAN);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d.M.yyyy", Locale.GERMAN);
         LocalDate itemDate = LocalDate.parse(date, dateFormatter);
         this.day = itemDate.getDayOfMonth();
         this.month = itemDate.getMonthValue();
