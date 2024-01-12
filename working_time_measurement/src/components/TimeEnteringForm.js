@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { Button, Stack } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import { useHistory, useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams} from 'react-router-dom';
 
 class TimeEnteringForm extends Component {
     state = {
-        date: (this.props.date != undefined ? this.props.date :((new Date()).toLocaleDateString())),
+        date: this.props.date != undefined ? this.props.date :((new Date()).toLocaleDateString("de-de")),
         startingHour: (this.props.startingHour != undefined ? this.props.startingHour :((new Date()).getHours()).toString()),
         startingMinute: (this.props.startingMinute != undefined ? this.props.startingMinute :((new Date()).getMinutes()).toString()),
         endHour: (this.props.endHour != undefined ? this.props.endHour :((new Date()).getHours()).toString()),
@@ -21,6 +21,57 @@ class TimeEnteringForm extends Component {
             breakDuration: false,
         }
     }
+
+    fetchEntry = () => {
+        var url = "http://localhost:8080/time/day";
+        let state = this.state;
+        const date = this.createDateFromDateString(state.date);
+
+        if (date !== undefined){
+            url = url + "?day=" + date.getDate();
+            url = url + "&month=" + (date.getMonth() + 1);
+            url = url + "&year=" + date.getFullYear();
+        }
+        const requestOptions = {
+            method: 'GET',
+            headers: { 
+                'Content-Type': 'application/json',
+            },
+        };
+
+        fetch(url, requestOptions)
+        .then(res => res.json())
+        .then(
+        (result) => {
+          let state = this.state;
+          state.startingHour = result.startingHour;
+          state.startingMinute = result.startingMinute;
+          state.endHour = result.endHour;
+          state.endMinute = result.endMinute;
+          state.breakDuration = result.breakDuration;
+          state = this.searchFormErrors(state);
+          this.setState(state);
+
+        },
+        (error) => {
+         console.log("No existing entry found for date: " + this.state.date);
+        }
+      )
+    }
+
+    createDateFromDateString = (dateString) => {
+        const [day, month, year] = dateString.split('.');
+      
+        const dateObject = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      
+        return dateObject;
+    }
+
+    componentDidMount(){
+        this.fetchEntry();
+    }
+
+
     
     submitEntry = (navigation) => {
         if(this.state.error.date){
@@ -60,7 +111,6 @@ class TimeEnteringForm extends Component {
 
         fetch(url, requestOptions)
         .then(res => {
-            debugger;
             if (res.status > 199 && res.status < 300){
                 navigation("/time-measurement");
             }
@@ -76,6 +126,8 @@ class TimeEnteringForm extends Component {
         state.date = date;
         state = this.searchFormErrors(state)
         this.setState(state);
+
+        this.fetchEntry();
     }
 
     setStartingHour = (startingHour) => {
@@ -120,13 +172,9 @@ class TimeEnteringForm extends Component {
     }
 
     searchFormErrors = (state) => {
-        debugger;
         let date = state.date;
-        var dateRegex = /^(\d{1,2}).(\d{1,2}).(\d{4})$/;
 
-        if (!dateRegex.test(date)){
-            state.error.date = true;
-        }else if (!this.isValidDate(date)){
+        if (!this.isValidDate(date)){
             state.error.date = true;
         }else{
             state.error.date = false;
@@ -146,7 +194,7 @@ class TimeEnteringForm extends Component {
         }
 
         let startingMinute = state.startingMinute;
-        let minuteRegex = /^(\d{2})$/;
+        let minuteRegex = /^(\d{1,2})$/;
         
         if(!minuteRegex.test(startingMinute)){
             state.error.startingMinute = true;
@@ -184,7 +232,7 @@ class TimeEnteringForm extends Component {
             state.error.endMinute = false;
         }
 
-        let breakRegex = /^(\d{2,3})$/;
+        let breakRegex = /^(\d{1,3})$/;
         let breakDuration = state.breakDuration;
 
         if(!breakRegex.test(breakDuration)){
@@ -199,7 +247,7 @@ class TimeEnteringForm extends Component {
     }
 
     isValidDate = (dateString) => {
-        const regex = /^\d{2}\.\d{2}\.\d{4}$/;
+        const regex = /^\d{1,2}.\d{1,2}.\d{4}$/;
         if (!regex.test(dateString)) {
           return false;
         }
@@ -264,11 +312,29 @@ function SubmitButton(props){
     const navigation = useNavigate();
     return(
         <Button onClick={() => {
-            debugger;
             props.submitFunction(navigation)
             }
         }>Submit</Button>
     )
 }
+
+const withQueryDateHOC = (Component) =>{
+    return (props) =>{
+        const [searchParams, setSearchParams] = useSearchParams();
+    let day = searchParams.get("day");
+    let month = searchParams.get("month");
+    let year = searchParams.get("year");
+    let date = undefined
+    if(day !== undefined && month !== undefined && year != undefined){
+        date = (day + "." + month + "." + year);
+    }
+
+    return <Component date={date} />
+
+    }
+    
+
+    return undefined;
+}
  
-export default TimeEnteringForm;
+export default withQueryDateHOC(TimeEnteringForm);

@@ -18,7 +18,7 @@ class App extends Component {
                     <Route path="/time-measurement" element={<TimeMeasurementStart />}/>
                     <Route path="/vacation" element={<Vacation />}/>
 
-                    <Route path="/time-measurement/new-entry" element={<TimeEnteringForm />}/>
+                    <Route path="/time-measurement/day" element={<TimeEnteringForm />}/>
                     <Route path="/time-measurement/overview" element={<TimeMonthOverview />}/>
                 </Routes>
             </BrowserRouter>
