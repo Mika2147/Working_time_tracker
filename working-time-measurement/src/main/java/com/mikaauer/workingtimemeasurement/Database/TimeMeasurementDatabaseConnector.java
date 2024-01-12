@@ -1,8 +1,13 @@
 package com.mikaauer.workingtimemeasurement.Database;
 
 import com.mikaauer.workingtimemeasurement.WorkDay.WorkDay;
+import com.mongodb.MongoException;
 import com.mongodb.client.*;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +29,23 @@ public class TimeMeasurementDatabaseConnector {
         document.put(DatabaseConstants.KEY_MONTH, workDay.getMonth());
         document.put(DatabaseConstants.KEY_YEAR, workDay.getYear());
 
-        document.put(DatabaseConstants.KEY_STARTING_HOUR, workDay.getStartingHour());
-        document.put(DatabaseConstants.KEY_STARTING_MINUTE, workDay.getStartingMinute());
+        Bson updates = Updates.combine(
+                Updates.set(DatabaseConstants.KEY_STARTING_HOUR, workDay.getStartingHour()),
+                Updates.set(DatabaseConstants.KEY_STARTING_MINUTE, workDay.getStartingMinute()),
+                Updates.set(DatabaseConstants.KEY_END_HOUR, workDay.getEndHour()),
+                Updates.set(DatabaseConstants.KEY_END_MINUTE, workDay.getEndMinute()),
+                Updates.set(DatabaseConstants.KEY_BREAK_DURATION, workDay.getBreakDuration())
+        );
 
-        document.put(DatabaseConstants.KEY_END_HOUR, workDay.getEndHour());
-        document.put(DatabaseConstants.KEY_END_MINUTE, workDay.getEndMinute());
+        UpdateOptions options = new UpdateOptions().upsert(true);
 
-        document.put(DatabaseConstants.KEY_BREAK_DURATION, workDay.getBreakDuration());
-        return collection.insertOne(document).wasAcknowledged();
+        try{
+            UpdateResult result = collection.updateOne(document, updates, options);
+            return result.wasAcknowledged();
+        }catch(MongoException e){
+            System.err.println("Unable to update due to an error: " + e);
+            return false;
+        }
     }
 
     public List<WorkDay> getWorkdays(int month, int year){
