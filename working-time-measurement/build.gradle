@@ -20,6 +20,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.mongodb:mongodb-driver-sync:4.11.1'
 	implementation group: 'javax.inject', name: 'javax.inject', version: '1'
+	implementation group: 'org.dhatim', name: 'fastexcel', version: '0.15.3'
 }
 
 tasks.named('test') {

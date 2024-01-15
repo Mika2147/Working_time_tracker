@@ -1,14 +1,21 @@
 package com.mikaauer.workingtimemeasurement;
 
 import com.mikaauer.workingtimemeasurement.Database.TimeMeasurementDatabaseConnector;
+import com.mikaauer.workingtimemeasurement.Export.Excel.ExcelExporter;
 import com.mikaauer.workingtimemeasurement.WorkDay.WorkDay;
 import com.mikaauer.workingtimemeasurement.WorkDay.WorkDayDTO;
 import com.mikaauer.workingtimemeasurement.WorkDay.WorkDayResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +59,7 @@ public class WorkingTimeMeasurementController {
         return entity;
     }
 
-    @GetMapping
+    @GetMapping()
     @RequestMapping("/day")
     public ResponseEntity<WorkDay> handleDayOverviewRequest(@RequestParam(value="day")Optional<Integer> day,
                                                             @RequestParam(value="month")Optional<Integer> month,
@@ -92,5 +99,42 @@ public class WorkingTimeMeasurementController {
                 body.getEndHour() + ":" + body.getEndMinute(), Integer.parseInt(body.getBreakDuration()));
         databaseConnector.insertWorkday(object);
         return ResponseEntity.ok(object);
+    }
+
+    @GetMapping()
+    @RequestMapping("/export")
+    public ResponseEntity<Resource> handleOverviewExportDownload(@RequestParam(value="month") Optional<Integer> month,
+                                                                 @RequestParam(value="year")Optional<Integer> year){
+        LocalDate now = LocalDate.now();
+
+        int localMonth = now.getMonthValue();
+        int localYear = now.getYear();
+
+        if(month.isPresent()){
+            localMonth = month.get();
+        }
+
+        if(year.isPresent()){
+            localYear = year.get();
+        }
+
+        List<WorkDay> workdays = databaseConnector.getWorkdays(localMonth, localYear);
+        workdays.sort((WorkDay i1, WorkDay i2) -> Integer.compare(i1.getDay(), i2.getDay()));
+
+        ExcelExporter exporter = new ExcelExporter();
+        String filePath = exporter.writeTimeFile(workdays);
+
+        try {
+            File file = new File(filePath);
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(filePath));
+            return ResponseEntity
+                    .ok()
+                    .contentLength(file.length())
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+        } catch (FileNotFoundException e) {
+            System.err.println(e);
+            return ResponseEntity.notFound().build();
+        }
     }
 }
