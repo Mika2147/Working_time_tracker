@@ -5,6 +5,7 @@ import TimeEnteringForm from './TimeEnteringForm';
 import TimeMonthOverview from './TimeMonthOverview';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Vacation from './Vacation';
+import TimeExport from './TimeExport';
 
 class App extends Component {
     state = {  } 
@@ -20,6 +21,7 @@ class App extends Component {
 
                     <Route path="/time-measurement/day" element={<TimeEnteringForm />}/>
                     <Route path="/time-measurement/overview" element={<TimeMonthOverview />}/>
+                    <Route path="/time-measurement/export" element={<TimeExport />}/>
                 </Routes>
             </BrowserRouter>
         </React.Fragment>
