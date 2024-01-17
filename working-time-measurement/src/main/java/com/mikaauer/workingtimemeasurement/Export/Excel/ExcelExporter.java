@@ -22,8 +22,8 @@ public class ExcelExporter {
 
     public String writeTimeFile(List<WorkDay> content){
         File currentDirectory = new File(FILE_DIRECTORY);
-        String path = currentDirectory.getAbsolutePath();
-        String fileLocation = path.substring(0, path.length() - 1) + ((new Date()).getTime()) + ".xlsx";
+        String path = currentDirectory.getAbsolutePath() + "/exports/excel/";
+        String fileLocation = path.substring(0, path.length()) + ((new Date()).getTime()) + ".xlsx";
 
         try(OutputStream os = Files.newOutputStream(Paths.get(fileLocation)); Workbook workbook = new Workbook(os, "Zeit", "1.0")){
             Worksheet worksheet = workbook.newWorksheet("Zeit");

@@ -131,7 +131,6 @@ public class WorkingTimeMeasurementController {
                     .ok()
                     .contentLength(file.length())
                     .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                    /*.contentType(MediaType.APPLICATION_OCTET_STREAM)*/
                     .body(resource);
         } catch (FileNotFoundException e) {
             System.err.println(e);
