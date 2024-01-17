@@ -12,6 +12,5 @@ import org.springframework.context.annotation.Configuration;
 public class WorkingTimeMeasurementApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(WorkingTimeMeasurementApplication.class, args);
-		var databaseConnector = new TimeMeasurementDatabaseConnector();
 	}
 }

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import NavigationBar from './NavigationBar';
-import TimeMeasurementStart from './TimeMeasurmentStart';
-import TimeEnteringForm from './TimeEnteringForm';
-import TimeMonthOverview from './TimeMonthOverview';
+import TimeMeasurementStart from './Time/TimeMeasurmentStart';
+import TimeEnteringForm from './Time/TimeEnteringForm';
+import TimeMonthOverview from './Time/TimeMonthOverview';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Vacation from './Vacation';
-import TimeExport from './TimeExport';
+import TimeExport from './Time/TimeExport';
+import Login from './Login';
 
 class App extends Component {
     state = {  } 
@@ -15,7 +16,7 @@ class App extends Component {
             <NavigationBar/>
 
                 <Routes>
-                    <Route path="/" element={<TimeMeasurementStart />} />
+                    <Route path="/login" element={<Login />} />
                     <Route path="/time-measurement" element={<TimeMeasurementStart />}/>
                     <Route path="/vacation" element={<Vacation />}/>
 

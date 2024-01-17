@@ -21,9 +21,7 @@ class TimeMonthOverview extends Component {
 
     fetchEntries(){
         var url = "http://localhost:8080/time";
-        if (this.state.month !== undefined){
-            url = url + "?month=" + this.state.month
-        }
+        
         const requestOptions = {
             method: 'GET',
             headers: { 
@@ -35,16 +33,10 @@ class TimeMonthOverview extends Component {
         .then(res => res.json())
         .then(
         (result) => {
-          this.setState({
-            isLoaded: true,
-            items: result.items
-          });
+          console.log(result);
         },
         (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
+            console.log(error);
         }
       )
     }
