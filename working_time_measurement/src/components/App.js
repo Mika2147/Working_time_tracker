@@ -18,6 +18,7 @@ class App extends Component {
 
                 <Routes>
                     <Route path="/login" element={<Login />}/>
+                    <Route path="/" element={<CheckLoginWrapper><TimeMeasurementStart /></CheckLoginWrapper>}/>
                     <Route path="/time-measurement" element={<CheckLoginWrapper><TimeMeasurementStart /></CheckLoginWrapper>}/>
                     <Route path="/vacation" element={<CheckLoginWrapper><Vacation /></CheckLoginWrapper>}/>
 

@@ -7,16 +7,16 @@ import org.springframework.web.context.annotation.SessionScope;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/token-validation")
+@RequestMapping(path = "/logout")
 @SessionScope
-public class WtmAuthorizationServerTokenValidationController {
+public class WtmAuthorizationServerLogoutController {
 
     @GetMapping()
-    public ResponseEntity<String> handleValidationRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-        if (authorization.startsWith("Basic ")) {
-            String auth = authorization.split("Basic ")[1];
-            // TODO: Validate Token here
-            if (!auth.isEmpty()) {
+    public ResponseEntity<String> handleLogoutRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization){
+        if(authorization.startsWith("Basic ")){
+            String token =  authorization.split("Basic ")[1];
+            // TODO: Validate token here and logout
+            if(!token.isEmpty()){
                 return ResponseEntity.ok().build();
             }
         }

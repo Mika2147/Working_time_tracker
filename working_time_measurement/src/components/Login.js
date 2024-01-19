@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams} from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { md5 } from 'js-md5';
+import Cookies from 'js-cookie';
 
 function Login(props){
     const navigation = useNavigate();
@@ -31,6 +32,7 @@ function Login(props){
         (result) => {
             debugger;
             if (result !== "") {
+                Cookies.set("Token", result)
                 navigation("/time-measurement");
             }
         },

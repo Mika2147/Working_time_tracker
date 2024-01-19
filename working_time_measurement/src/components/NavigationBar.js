@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 import React, { Component } from 'react';
 import { Navbar, Container, Nav, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -19,12 +20,39 @@ class NavigationBar extends Component {
               </Link>
             </Nav>
             <Nav>
-              <Button variant="danger" href="/">Logout</Button>
+              <Button variant="danger" href="/" onClick={() => logout()}>Logout</Button>
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>;
     }
+}
+
+function logout(){
+  var url = "http://localhost:8083/token-validation";
+        const token = Cookies.get("Token");
+
+
+        const requestOptions = {
+            method: 'GET',
+            headers: { 
+                'Authorization': ('Basic ' + token),
+            },
+        };
+
+        fetch(url, requestOptions)
+        .then(res => res.status)
+        .then(
+        (result) => {
+          if (result === 200){
+            Cookies.remove("Token");
+          }
+
+        },
+        (error) => {
+            console.log("Failed to log out");  
+        }
+      )
 }
  
 export default NavigationBar;
