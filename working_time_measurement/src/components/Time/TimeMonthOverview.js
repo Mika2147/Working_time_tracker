@@ -4,6 +4,7 @@ import Pagination from 'react-bootstrap/Pagination';
 import MonthPagination from './MonthPagination';
 import { Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import CheckLoginWrapper from '../CheckLoginWrapper'
 
 
 class TimeMonthOverview extends Component {
@@ -21,7 +22,9 @@ class TimeMonthOverview extends Component {
 
     fetchEntries(){
         var url = "http://localhost:8080/time";
-        
+        if (this.state.month !== undefined){
+            url = url + "?month=" + this.state.month
+        }
         const requestOptions = {
             method: 'GET',
             headers: { 
@@ -33,10 +36,16 @@ class TimeMonthOverview extends Component {
         .then(res => res.json())
         .then(
         (result) => {
-          console.log(result);
+          this.setState({
+            isLoaded: true,
+            items: result.items
+          });
         },
         (error) => {
-            console.log(error);
+          this.setState({
+            isLoaded: true,
+            error
+          });
         }
       )
     }

@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Vacation from './Vacation';
 import TimeExport from './Time/TimeExport';
 import Login from './Login';
+import CheckLoginWrapper from './CheckLoginWrapper';
 
 class App extends Component {
     state = {  } 
@@ -16,13 +17,13 @@ class App extends Component {
             <NavigationBar/>
 
                 <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/time-measurement" element={<TimeMeasurementStart />}/>
-                    <Route path="/vacation" element={<Vacation />}/>
+                    <Route path="/login" element={<Login />}/>
+                    <Route path="/time-measurement" element={<CheckLoginWrapper><TimeMeasurementStart /></CheckLoginWrapper>}/>
+                    <Route path="/vacation" element={<CheckLoginWrapper><Vacation /></CheckLoginWrapper>}/>
 
-                    <Route path="/time-measurement/day" element={<TimeEnteringForm />}/>
-                    <Route path="/time-measurement/overview" element={<TimeMonthOverview />}/>
-                    <Route path="/time-measurement/export" element={<TimeExport />}/>
+                    <Route path="/time-measurement/day" element={<CheckLoginWrapper><TimeEnteringForm /></CheckLoginWrapper>}/>
+                    <Route path="/time-measurement/overview" element={<CheckLoginWrapper><TimeMonthOverview /></CheckLoginWrapper>}/>
+                    <Route path="/time-measurement/export" element={<CheckLoginWrapper><TimeExport /></CheckLoginWrapper>}/>
                 </Routes>
             </BrowserRouter>
         </React.Fragment>
