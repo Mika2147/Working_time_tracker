@@ -13,7 +13,7 @@ import javax.sql.DataSource;
 @Configuration
 public class PostgresDataSource {
 
-    @Bean
+    /*@Bean
     public DataSource dataSource() {
         return DataSourceBuilder.create().build();
     }
@@ -35,6 +35,6 @@ public class PostgresDataSource {
         JpaTransactionManager txManager = new JpaTransactionManager();
         txManager.setEntityManagerFactory(entityManagerFactory().getObject());
         return txManager;
-    }
+    }*/
 
 }

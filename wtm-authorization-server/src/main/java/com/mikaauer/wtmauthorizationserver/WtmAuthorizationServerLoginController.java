@@ -1,6 +1,7 @@
 package com.mikaauer.wtmauthorizationserver;
 
 import com.mikaauer.wtmauthorizationserver.UserDatabase.UserDatabaseConnector;
+import com.mikaauer.wtmauthorizationserver.UserDatabase.UserRepository;
 import com.mikaauer.wtmauthorizationserver.UserDatabase.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -16,8 +17,13 @@ import java.util.Optional;
 @SessionScope
 public class WtmAuthorizationServerLoginController {
 
-    @Autowired
-    UserDatabaseConnector userDatabaseConnector;
+    UserDatabaseConnector userDatabaseConnector = new UserDatabaseConnector();
+
+    private final UserRepository userRepository;
+
+    public WtmAuthorizationServerLoginController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
 
     @GetMapping()
@@ -27,7 +33,9 @@ public class WtmAuthorizationServerLoginController {
             // TODO: Validate user here and create token
             if (auth.length > 1) {
                 String username = auth[0];
-                Optional<Users> user = userDatabaseConnector.getUser(username);
+                var res = userRepository.findByName(username);
+
+                Optional<Users> user = res.stream().findFirst();
 
                 if(user.isPresent()){
                     if(user.get().getPassword().equals(auth[1])){

@@ -6,3 +6,17 @@ app:
     username: postgres
     password: password
     pool-size: 30
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/users
+    jdbc-url: jdbc:postgresql://localhost:5432/users
+    platform: postgres
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect

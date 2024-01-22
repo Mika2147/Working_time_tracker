@@ -2,12 +2,15 @@ package com.mikaauer.wtmauthorizationserver.UserDatabase;
 
 import jakarta.persistence.*;
 
+import java.util.UUID;
+
 @Entity
+@Table(name = "users")
 public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column(nullable = false, unique = true)
     private String name;
@@ -18,18 +21,22 @@ public class Users {
     @Column(nullable = false)
     private Boolean isadmin;
 
-    public Users(Long id, String name, String password, Boolean isadmin) {
+    public Users() {
+
+    }
+
+    public Users(UUID id, String name, String password, Boolean isadmin) {
         this.id = id;
         this.name = name;
         this.password = password;
         this.isadmin = isadmin;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
