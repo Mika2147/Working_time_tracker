@@ -12,7 +12,7 @@ import org.springframework.web.context.annotation.SessionScope;
 public class WtmAuthorizationServerRegisterController {
 
     @PostMapping()
-    public ResponseEntity<String> handleLoginRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @RequestBody Credentials credentials) {
+    public ResponseEntity<String> handleRegisterRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @RequestBody Credentials credentials) {
         if (authorization.startsWith("Basic ")) {
             String auth = authorization.split("Basic ")[1];
             // TODO: Validate Token here

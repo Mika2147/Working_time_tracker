@@ -1,5 +1,6 @@
 package com.mikaauer.wtmauthorizationserver;
 
+import com.mikaauer.wtmauthorizationserver.Token.TokenManager;
 import com.mikaauer.wtmauthorizationserver.UserDatabase.UserDatabaseConnector;
 import com.mikaauer.wtmauthorizationserver.UserDatabase.UserRepository;
 import com.mikaauer.wtmauthorizationserver.UserDatabase.Users;
@@ -37,17 +38,13 @@ public class WtmAuthorizationServerLoginController {
 
                 Optional<Users> user = res.stream().findFirst();
 
-                if(user.isPresent()){
-                    if(user.get().getPassword().equals(auth[1])){
-                        return ResponseEntity.ok("token");
+                if (user.isPresent()) {
+                    if (user.get().getPassword().equals(auth[1])) {
+                        String tokenString = TokenManager.getInstance().generateNewToken(username).getTokenString();
+                        return ResponseEntity.ok(tokenString);
                     }
                 }
             }
-            /*if(auth[0].equals("21232f297a57a5a743894a0e4a801fc3")){
-                if (auth[1].equals("21232f297a57a5a743894a0e4a801fc3")){
-                    return ResponseEntity.ok("token");
-                }
-            }*/
         }
         return ResponseEntity.notFound().build();
     }
