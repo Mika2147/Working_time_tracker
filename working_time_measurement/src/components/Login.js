@@ -33,6 +33,7 @@ function Login(props){
             debugger;
             if (result !== "") {
                 Cookies.set("Token", result)
+                Cookies.set("Username", username)
                 navigation("/time-measurement");
             }
         },

@@ -1,6 +1,8 @@
 import React, { Component, useEffect } from 'react';
 import { useNavigate} from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { md5 } from 'js-md5';
+
 
 function CheckLoginWrapper (props){
     const navigation = useNavigate();
@@ -8,6 +10,7 @@ function CheckLoginWrapper (props){
 
     useEffect(() => {
         var url = "http://localhost:8083/token-validation";
+        var hashedUsername = md5(Cookies.get("Username"));
         const token = Cookies.get("Token");
 
         if(token === undefined){
@@ -17,7 +20,7 @@ function CheckLoginWrapper (props){
         const requestOptions = {
             method: 'GET',
             headers: { 
-                'Authorization': ('Basic ' + token),
+                'Authorization': ('Basic ' + hashedUsername + ":" + token),
             },
         };
 

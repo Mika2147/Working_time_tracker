@@ -8,6 +8,7 @@ import com.mikaauer.workingtimemeasurement.WorkDay.WorkDayResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,8 @@ public class WorkingTimeMeasurementController {
 
     @GetMapping()
     public ResponseEntity<WorkDayResponse> handleMonthOverviewRequest(@RequestParam(value = "month") Optional<String> month,
-                                                                      @RequestParam(value = "year") Optional<String> year) {
+                                                                      @RequestParam(value = "year") Optional<String> year,
+                                                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
 
         LocalDate now = LocalDate.now();
 
@@ -63,7 +65,8 @@ public class WorkingTimeMeasurementController {
     @RequestMapping("/day")
     public ResponseEntity<WorkDay> handleDayOverviewRequest(@RequestParam(value="day")Optional<Integer> day,
                                                             @RequestParam(value="month")Optional<Integer> month,
-                                                            @RequestParam(value="year")Optional<Integer> year){
+                                                            @RequestParam(value="year")Optional<Integer> year,
+                                                            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization){
 
         LocalDate now = LocalDate.now();
 
@@ -93,7 +96,8 @@ public class WorkingTimeMeasurementController {
     }
 
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<WorkDay> handleWorkDayPostRequest(@RequestBody WorkDayDTO body){
+    public ResponseEntity<WorkDay> handleWorkDayPostRequest(@RequestBody WorkDayDTO body,
+                                                            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization){
         System.out.println(body);
         WorkDay object = new WorkDay(body.getDate(), body.getStartingHour() + ":" + body.getStartingMinute(),
                 body.getEndHour() + ":" + body.getEndMinute(), Integer.parseInt(body.getBreakDuration()));
@@ -104,7 +108,8 @@ public class WorkingTimeMeasurementController {
     @GetMapping()
     @RequestMapping("/export")
     public ResponseEntity<Resource> handleOverviewExportDownload(@RequestParam(value="month") Optional<Integer> month,
-                                                                 @RequestParam(value="year")Optional<Integer> year){
+                                                                 @RequestParam(value="year")Optional<Integer> year,
+                                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization){
         LocalDate now = LocalDate.now();
 
         int localMonth = now.getMonthValue();

@@ -3,6 +3,8 @@ import { Button, Stack } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { useNavigate, useSearchParams} from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { md5 } from 'js-md5';
 
 class TimeEnteringForm extends Component {
     state = {
@@ -27,6 +29,9 @@ class TimeEnteringForm extends Component {
         let state = this.state;
         const date = this.createDateFromDateString(state.date);
 
+        var hashedUsername = md5(Cookies.get("Username"));
+        var token = Cookies.get("Token");
+
         if (date !== undefined){
             url = url + "?day=" + date.getDate();
             url = url + "&month=" + (date.getMonth() + 1);
@@ -36,6 +41,7 @@ class TimeEnteringForm extends Component {
             method: 'GET',
             headers: { 
                 'Content-Type': 'application/json',
+                'Authorization': ("Basic " + hashedUsername + ":" + token),
             },
         };
 

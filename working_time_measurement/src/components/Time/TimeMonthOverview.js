@@ -4,7 +4,9 @@ import Pagination from 'react-bootstrap/Pagination';
 import MonthPagination from './MonthPagination';
 import { Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import CheckLoginWrapper from '../CheckLoginWrapper'
+import Cookies from 'js-cookie';
+import { md5 } from 'js-md5';
+
 
 
 class TimeMonthOverview extends Component {
@@ -25,10 +27,15 @@ class TimeMonthOverview extends Component {
         if (this.state.month !== undefined){
             url = url + "?month=" + this.state.month
         }
+
+        var hashedUsername = md5(Cookies.get("Username"));
+        var token = Cookies.get("Token");
+
         const requestOptions = {
             method: 'GET',
             headers: { 
                 'Content-Type': 'application/json',
+                'Authorization': ("Basic " + hashedUsername + ":" + token)
             },
         };
 

@@ -1,7 +1,9 @@
-import Cookies from 'js-cookie';
 import React, { Component } from 'react';
 import { Navbar, Container, Nav, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { md5 } from 'js-md5';
+
 
 class NavigationBar extends Component {
     state = {  } 
@@ -29,14 +31,14 @@ class NavigationBar extends Component {
 }
 
 function logout(){
-  var url = "http://localhost:8083/token-validation";
+  var url = "http://localhost:8083/logout";
         const token = Cookies.get("Token");
-
+        var hashedUsername = md5(Cookies.get("Username"));
 
         const requestOptions = {
             method: 'GET',
             headers: { 
-                'Authorization': ('Basic ' + token),
+                'Authorization': ("Basic " + hashedUsername + ":" + token),
             },
         };
 
