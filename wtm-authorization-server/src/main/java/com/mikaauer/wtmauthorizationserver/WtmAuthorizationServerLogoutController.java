@@ -20,7 +20,7 @@ public class WtmAuthorizationServerLogoutController {
             String username = splitted[0];
             String tokenString = splitted[1];
 
-            if(TokenManager.getInstance().validate(username, tokenString)){
+            if(TokenManager.getInstance().validate(username, tokenString, false)){
                 TokenManager.getInstance().removeToken(username);
                 return ResponseEntity.ok().build();
             }

@@ -5,10 +5,13 @@ public class Token {
     private String tokenString;
     private Long createdTimestamp;
 
-    public Token(String username, String tokenString, Long createdTimestamp) {
+    private boolean isAdmin;
+
+    public Token(String username, String tokenString, Long createdTimestamp, boolean isAdmin) {
         this.username = username;
         this.tokenString = tokenString;
         this.createdTimestamp = createdTimestamp;
+        this.isAdmin = isAdmin;
     }
 
     public String getUsername() {
@@ -21,5 +24,9 @@ public class Token {
 
     public Long getCreatedTimestamp() {
         return createdTimestamp;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
     }
 }

@@ -2,6 +2,7 @@ package com.mikaauer.workingtimemeasurement;
 
 import com.mikaauer.workingtimemeasurement.Database.TimeMeasurementDatabaseConnector;
 import com.mikaauer.workingtimemeasurement.Export.Excel.ExcelExporter;
+import com.mikaauer.workingtimemeasurement.Validation.Validator;
 import com.mikaauer.workingtimemeasurement.WorkDay.WorkDay;
 import com.mikaauer.workingtimemeasurement.WorkDay.WorkDayDTO;
 import com.mikaauer.workingtimemeasurement.WorkDay.WorkDayResponse;
@@ -34,92 +35,102 @@ public class WorkingTimeMeasurementController {
     public ResponseEntity<WorkDayResponse> handleMonthOverviewRequest(@RequestParam(value = "month") Optional<String> month,
                                                                       @RequestParam(value = "year") Optional<String> year,
                                                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        if ((new Validator()).validate(authorization)) {
+            LocalDate now = LocalDate.now();
 
-        LocalDate now = LocalDate.now();
+            int localMonth = now.getMonthValue();
+            int localYear = now.getYear();
 
-        int localMonth = now.getMonthValue();
-        int localYear = now.getYear();
+            if (month.isPresent()) {
+                localMonth = Integer.parseInt(month.get());
+            }
 
-        if(month.isPresent()){
-            localMonth = Integer.parseInt(month.get());
+            if (year.isPresent()) {
+                localYear = Integer.parseInt(year.get());
+            }
+
+            List<WorkDay> workDays = databaseConnector.getWorkdays(localMonth, localYear);
+
+            workDays.sort((WorkDay i1, WorkDay i2) -> Integer.compare(i1.getDay(), i2.getDay()));
+
+            WorkDayResponse response = new WorkDayResponse(workDays);
+
+            ResponseEntity entity = ResponseEntity
+                    .ok()
+                    .body(response);
+
+            return entity;
         }
 
-        if(year.isPresent()){
-            localYear = Integer.parseInt(year.get());
-        }
 
-        List<WorkDay> workDays = databaseConnector.getWorkdays(localMonth, localYear);
-
-        workDays.sort((WorkDay i1, WorkDay i2) -> Integer.compare(i1.getDay(), i2.getDay()));
-
-        WorkDayResponse response = new WorkDayResponse(workDays);
-
-        ResponseEntity entity = ResponseEntity
-                .ok()
-                .body(response);
-
-        return entity;
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping()
     @RequestMapping("/day")
-    public ResponseEntity<WorkDay> handleDayOverviewRequest(@RequestParam(value="day")Optional<Integer> day,
-                                                            @RequestParam(value="month")Optional<Integer> month,
-                                                            @RequestParam(value="year")Optional<Integer> year,
-                                                            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization){
+    public ResponseEntity<WorkDay> handleDayOverviewRequest(@RequestParam(value = "day") Optional<Integer> day,
+                                                            @RequestParam(value = "month") Optional<Integer> month,
+                                                            @RequestParam(value = "year") Optional<Integer> year,
+                                                            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
 
-        LocalDate now = LocalDate.now();
+        if ((new Validator().validate(authorization))) {
+            LocalDate now = LocalDate.now();
 
-        int localDay = now.getDayOfMonth();
-        int localMonth = now.getMonthValue();
-        int localYear = now.getYear();
+            int localDay = now.getDayOfMonth();
+            int localMonth = now.getMonthValue();
+            int localYear = now.getYear();
 
-        if(day.isPresent()){
-            localDay = day.get();
+            if (day.isPresent()) {
+                localDay = day.get();
+            }
+
+            if (month.isPresent()) {
+                localMonth = month.get();
+            }
+
+            if (year.isPresent()) {
+                localYear = year.get();
+            }
+
+            Optional<WorkDay> workday = databaseConnector.getWorkday(localDay, localMonth, localYear);
+
+            if (workday.isPresent()) {
+                return ResponseEntity.ok(workday.get());
+            }
+
+
         }
 
-        if(month.isPresent()){
-            localMonth = month.get();
-        }
+        return ResponseEntity.notFound().build();
 
-        if(year.isPresent()){
-            localYear = year.get();
-        }
-
-        Optional<WorkDay> workday = databaseConnector.getWorkday(localDay, localMonth, localYear);
-
-        if(workday.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(workday.get());
     }
 
     @PostMapping(consumes = "application/json")
     public ResponseEntity<WorkDay> handleWorkDayPostRequest(@RequestBody WorkDayDTO body,
-                                                            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization){
-        System.out.println(body);
-        WorkDay object = new WorkDay(body.getDate(), body.getStartingHour() + ":" + body.getStartingMinute(),
-                body.getEndHour() + ":" + body.getEndMinute(), Integer.parseInt(body.getBreakDuration()));
-        databaseConnector.insertWorkday(object);
-        return ResponseEntity.ok(object);
+                                                            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        if ((new Validator()).validate(authorization)) {
+            WorkDay object = new WorkDay(body.getDate(), body.getStartingHour() + ":" + body.getStartingMinute(),
+                    body.getEndHour() + ":" + body.getEndMinute(), Integer.parseInt(body.getBreakDuration()));
+            databaseConnector.insertWorkday(object);
+            return ResponseEntity.ok(object);
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @GetMapping()
     @RequestMapping("/export")
-    public ResponseEntity<Resource> handleOverviewExportDownload(@RequestParam(value="month") Optional<Integer> month,
-                                                                 @RequestParam(value="year")Optional<Integer> year,
-                                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization){
+    public ResponseEntity<Resource> handleOverviewExportDownload(@RequestParam(value = "month") Optional<Integer> month,
+                                                                 @RequestParam(value = "year") Optional<Integer> year) {
         LocalDate now = LocalDate.now();
 
         int localMonth = now.getMonthValue();
         int localYear = now.getYear();
 
-        if(month.isPresent()){
+        if (month.isPresent()) {
             localMonth = month.get();
         }
 
-        if(year.isPresent()){
+        if (year.isPresent()) {
             localYear = year.get();
         }
 

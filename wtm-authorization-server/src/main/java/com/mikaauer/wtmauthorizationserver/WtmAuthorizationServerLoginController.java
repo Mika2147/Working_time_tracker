@@ -40,7 +40,7 @@ public class WtmAuthorizationServerLoginController {
 
                 if (user.isPresent()) {
                     if (user.get().getPassword().equals(auth[1])) {
-                        String tokenString = TokenManager.getInstance().generateNewToken(username).getTokenString();
+                        String tokenString = TokenManager.getInstance().generateNewToken(username, user.get().getIsadmin()).getTokenString();
                         return ResponseEntity.ok(tokenString);
                     }
                 }

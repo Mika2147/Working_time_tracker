@@ -26,12 +26,14 @@ public class TokenManager {
         return shared;
     }
 
-    public boolean validate(String username, String tokenString){
+    public boolean validate(String username, String tokenString, boolean needsAdminRights){
         if(tokenMap.containsKey(username)){
             Token token = tokenMap.get(username);
             if(token.getTokenString().equals(tokenString)){
                 if((token.getCreatedTimestamp() + TOKEN_LIFETIME) > (new Date()).getTime()){
-                    return true;
+                    if(!needsAdminRights || (needsAdminRights && token.isAdmin())){
+                        return true;
+                    }
                 }else {
                     tokenMap.remove(username);
                 }
@@ -40,8 +42,8 @@ public class TokenManager {
         return true;
     }
 
-    public Token generateNewToken(String username){
-        Token token = new Token(username, generateTokenString(), ((new Date()).getTime() + TOKEN_LIFETIME));
+    public Token generateNewToken(String username, boolean isAdmin){
+        Token token = new Token(username, generateTokenString(), ((new Date()).getTime() + TOKEN_LIFETIME), isAdmin);
         tokenMap.put(username, token);
         return token;
     }
