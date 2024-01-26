@@ -35,31 +35,36 @@ public class WorkingTimeMeasurementController {
     public ResponseEntity<WorkDayResponse> handleMonthOverviewRequest(@RequestParam(value = "month") Optional<String> month,
                                                                       @RequestParam(value = "year") Optional<String> year,
                                                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-        if ((new Validator()).validate(authorization)) {
-            LocalDate now = LocalDate.now();
+        try {
+            if ((new Validator()).validate(authorization)) {
+                LocalDate now = LocalDate.now();
 
-            int localMonth = now.getMonthValue();
-            int localYear = now.getYear();
+                int localMonth = now.getMonthValue();
+                int localYear = now.getYear();
 
-            if (month.isPresent()) {
-                localMonth = Integer.parseInt(month.get());
+                if (month.isPresent()) {
+                    localMonth = Integer.parseInt(month.get());
+                }
+
+                if (year.isPresent()) {
+                    localYear = Integer.parseInt(year.get());
+                }
+
+                List<WorkDay> workDays = databaseConnector.getWorkdays(localMonth, localYear, getUsername(authorization));
+
+                workDays.sort((WorkDay i1, WorkDay i2) -> Integer.compare(i1.getDay(), i2.getDay()));
+
+                WorkDayResponse response = new WorkDayResponse(workDays);
+
+                ResponseEntity entity = ResponseEntity
+                        .ok()
+                        .body(response);
+
+                return entity;
             }
 
-            if (year.isPresent()) {
-                localYear = Integer.parseInt(year.get());
-            }
-
-            List<WorkDay> workDays = databaseConnector.getWorkdays(localMonth, localYear);
-
-            workDays.sort((WorkDay i1, WorkDay i2) -> Integer.compare(i1.getDay(), i2.getDay()));
-
-            WorkDayResponse response = new WorkDayResponse(workDays);
-
-            ResponseEntity entity = ResponseEntity
-                    .ok()
-                    .body(response);
-
-            return entity;
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
 
 
@@ -72,17 +77,70 @@ public class WorkingTimeMeasurementController {
                                                             @RequestParam(value = "month") Optional<Integer> month,
                                                             @RequestParam(value = "year") Optional<Integer> year,
                                                             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        try {
+            if ((new Validator().validate(authorization))) {
+                LocalDate now = LocalDate.now();
 
-        if ((new Validator().validate(authorization))) {
+                int localDay = now.getDayOfMonth();
+                int localMonth = now.getMonthValue();
+                int localYear = now.getYear();
+
+                if (day.isPresent()) {
+                    localDay = day.get();
+                }
+
+                if (month.isPresent()) {
+                    localMonth = month.get();
+                }
+
+                if (year.isPresent()) {
+                    localYear = year.get();
+                }
+
+                Optional<WorkDay> workday = databaseConnector.getWorkday(localDay, localMonth, localYear, getUsername(authorization));
+
+                if (workday.isPresent()) {
+                    return ResponseEntity.ok(workday.get());
+                }
+
+
+            }
+
+            return ResponseEntity.notFound().build();
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+    }
+
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<WorkDay> handleWorkDayPostRequest(@RequestBody WorkDayDTO body, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        try {
+            if ((new Validator()).validate(authorization)) {
+                WorkDay object = new WorkDay(body.getDate(), body.getStartingHour() + ":" + body.getStartingMinute(),
+                        body.getEndHour() + ":" + body.getEndMinute(), Integer.parseInt(body.getBreakDuration()),
+                        getUsername(authorization));
+                databaseConnector.insertWorkday(object);
+                return ResponseEntity.ok(object);
+            }
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+    }
+
+    @GetMapping()
+    @RequestMapping("/export")
+    public ResponseEntity<Resource> handleOverviewExportDownload(@RequestParam(value = "month") Optional<Integer> month,
+                                                                 @RequestParam(value = "year") Optional<Integer> year,
+                                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        try {
             LocalDate now = LocalDate.now();
 
-            int localDay = now.getDayOfMonth();
             int localMonth = now.getMonthValue();
             int localYear = now.getYear();
-
-            if (day.isPresent()) {
-                localDay = day.get();
-            }
 
             if (month.isPresent()) {
                 localMonth = month.get();
@@ -92,65 +150,41 @@ public class WorkingTimeMeasurementController {
                 localYear = year.get();
             }
 
-            Optional<WorkDay> workday = databaseConnector.getWorkday(localDay, localMonth, localYear);
+            List<WorkDay> workdays = databaseConnector.getWorkdays(localMonth, localYear, getUsername(authorization));
+            workdays.sort((WorkDay i1, WorkDay i2) -> Integer.compare(i1.getDay(), i2.getDay()));
 
-            if (workday.isPresent()) {
-                return ResponseEntity.ok(workday.get());
+            ExcelExporter exporter = new ExcelExporter();
+            String filePath = exporter.writeTimeFile(workdays);
+
+            try {
+                File file = new File(filePath);
+                InputStreamResource resource = new InputStreamResource(new FileInputStream(filePath));
+                return ResponseEntity
+                        .ok()
+                        .contentLength(file.length())
+                        .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                        .body(resource);
+            } catch (FileNotFoundException e) {
+                System.err.println(e);
+                return ResponseEntity.notFound().build();
             }
-
-
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
-
-        return ResponseEntity.notFound().build();
 
     }
 
-    @PostMapping(consumes = "application/json")
-    public ResponseEntity<WorkDay> handleWorkDayPostRequest(@RequestBody WorkDayDTO body,
-                                                            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-        if ((new Validator()).validate(authorization)) {
-            WorkDay object = new WorkDay(body.getDate(), body.getStartingHour() + ":" + body.getStartingMinute(),
-                    body.getEndHour() + ":" + body.getEndMinute(), Integer.parseInt(body.getBreakDuration()));
-            databaseConnector.insertWorkday(object);
-            return ResponseEntity.ok(object);
-        }
-        return ResponseEntity.badRequest().build();
-    }
-
-    @GetMapping()
-    @RequestMapping("/export")
-    public ResponseEntity<Resource> handleOverviewExportDownload(@RequestParam(value = "month") Optional<Integer> month,
-                                                                 @RequestParam(value = "year") Optional<Integer> year) {
-        LocalDate now = LocalDate.now();
-
-        int localMonth = now.getMonthValue();
-        int localYear = now.getYear();
-
-        if (month.isPresent()) {
-            localMonth = month.get();
-        }
-
-        if (year.isPresent()) {
-            localYear = year.get();
-        }
-
-        List<WorkDay> workdays = databaseConnector.getWorkdays(localMonth, localYear);
-        workdays.sort((WorkDay i1, WorkDay i2) -> Integer.compare(i1.getDay(), i2.getDay()));
-
-        ExcelExporter exporter = new ExcelExporter();
-        String filePath = exporter.writeTimeFile(workdays);
-
-        try {
-            File file = new File(filePath);
-            InputStreamResource resource = new InputStreamResource(new FileInputStream(filePath));
-            return ResponseEntity
-                    .ok()
-                    .contentLength(file.length())
-                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                    .body(resource);
-        } catch (FileNotFoundException e) {
-            System.err.println(e);
-            return ResponseEntity.notFound().build();
+    private String getUsername(String authorization) throws IllegalAccessException {
+        if (authorization.startsWith("Basic ")) {
+            String[] auth = authorization.split("Basic ")[1].split(":");
+            // TODO: Validate user here and create token
+            if (auth.length > 1) {
+                return auth[0];
+            } else {
+                throw new IllegalArgumentException("Authorization Header does not contain username");
+            }
+        } else {
+            throw new IllegalAccessException("Authorization Header is not valid");
         }
     }
 }

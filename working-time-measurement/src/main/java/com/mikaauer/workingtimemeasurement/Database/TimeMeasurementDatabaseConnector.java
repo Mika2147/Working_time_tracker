@@ -28,6 +28,7 @@ public class TimeMeasurementDatabaseConnector {
         document.put(DatabaseConstants.KEY_DAY, workDay.getDay());
         document.put(DatabaseConstants.KEY_MONTH, workDay.getMonth());
         document.put(DatabaseConstants.KEY_YEAR, workDay.getYear());
+        document.put(DatabaseConstants.KEY_USERNAME, workDay.getUsername());
 
         Bson updates = Updates.combine(
                 Updates.set(DatabaseConstants.KEY_STARTING_HOUR, workDay.getStartingHour()),
@@ -48,12 +49,13 @@ public class TimeMeasurementDatabaseConnector {
         }
     }
 
-    public List<WorkDay> getWorkdays(int month, int year){
+    public List<WorkDay> getWorkdays(int month, int year, String username){
         MongoDatabase database = mongoClient.getDatabase(DatabaseConstants.TIME_DATABASE_NAME);
         MongoCollection<Document> collection = database.getCollection(DatabaseConstants.WORKDAYS_COLLECTION_NAME);
         Document searchQuery = new Document();
         searchQuery.put(DatabaseConstants.KEY_MONTH, month);
         searchQuery.put(DatabaseConstants.KEY_YEAR, year);
+        searchQuery.put(DatabaseConstants.KEY_USERNAME, username);
         FindIterable<Document> cursor = collection.find(searchQuery);
 
         List<WorkDay> workdays = new ArrayList<>();
@@ -70,7 +72,7 @@ public class TimeMeasurementDatabaseConnector {
                 int documentEndMinute = document.getInteger(DatabaseConstants.KEY_END_MINUTE);
                 int documentBreakDuration = document.getInteger(DatabaseConstants.KEY_BREAK_DURATION);
                 WorkDay workDay = new WorkDay(documentDay, documentMonth, documentYear, documentStartingHour,
-                        documentStartingMinute, documentEndHour, documentEndMinute, documentBreakDuration);
+                        documentStartingMinute, documentEndHour, documentEndMinute, documentBreakDuration, username);
                 workdays.add(workDay);
             }
         }
@@ -78,13 +80,14 @@ public class TimeMeasurementDatabaseConnector {
         return workdays;
     }
 
-    public Optional<WorkDay> getWorkday(int day, int month, int year){
+    public Optional<WorkDay> getWorkday(int day, int month, int year, String username){
         MongoDatabase database = mongoClient.getDatabase(DatabaseConstants.TIME_DATABASE_NAME);
         MongoCollection<Document> collection = database.getCollection(DatabaseConstants.WORKDAYS_COLLECTION_NAME);
         Document searchQuery = new Document();
         searchQuery.put(DatabaseConstants.KEY_DAY, day);
         searchQuery.put(DatabaseConstants.KEY_MONTH, month);
         searchQuery.put(DatabaseConstants.KEY_YEAR, year);
+        searchQuery.put(DatabaseConstants.KEY_USERNAME, username);
         FindIterable<Document> cursor = collection.find(searchQuery);
 
         try (final MongoCursor<Document> cursorIterator = cursor.cursor()) {
@@ -98,8 +101,9 @@ public class TimeMeasurementDatabaseConnector {
                 int documentEndHour = document.getInteger(DatabaseConstants.KEY_END_HOUR);
                 int documentEndMinute = document.getInteger(DatabaseConstants.KEY_END_MINUTE);
                 int documentBreakDuration = document.getInteger(DatabaseConstants.KEY_BREAK_DURATION);
+                String documentUsername = document.getString(DatabaseConstants.KEY_USERNAME);
                 WorkDay workDay = new WorkDay(documentDay, documentMonth, documentYear, documentStartingHour,
-                        documentStartingMinute, documentEndHour, documentEndMinute, documentBreakDuration);
+                        documentStartingMinute, documentEndHour, documentEndMinute, documentBreakDuration, documentUsername);
                 return Optional.ofNullable(workDay);
             }
         }

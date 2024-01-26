@@ -20,8 +20,9 @@ public class WorkDay {
     private int endHour;
     private int endMinute;
     private int breakDuration;
+    private String username;
 
-    public WorkDay(String date, String startingTime, String endTime, int breakDuration) {
+    public WorkDay(String date, String startingTime, String endTime, int breakDuration, String username) {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d.M.yyyy", Locale.GERMAN);
         LocalDate itemDate = LocalDate.parse(date, dateFormatter);
         this.day = itemDate.getDayOfMonth();
@@ -46,9 +47,11 @@ public class WorkDay {
         }
 
         this.breakDuration = breakDuration;
+        this.username = username;
     }
 
-    public WorkDay(int day, int month, int year, int startingHour, int startingMinute, int endHour, int endMinute, int breakDuration) {
+    public WorkDay(int day, int month, int year, int startingHour, int startingMinute, int endHour, int endMinute,
+                   int breakDuration, String username) {
         this.day = day;
         this.month = month;
         this.year = year;
@@ -57,6 +60,7 @@ public class WorkDay {
         this.endHour = endHour;
         this.endMinute = endMinute;
         this.breakDuration = breakDuration;
+        this.username = username;
     }
 
     public String getDate() {
@@ -110,6 +114,10 @@ public class WorkDay {
         return endMinute;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     public void setDay(int day) {
         this.day = day;
     }
@@ -142,4 +150,7 @@ public class WorkDay {
         this.breakDuration = breakDuration;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }
