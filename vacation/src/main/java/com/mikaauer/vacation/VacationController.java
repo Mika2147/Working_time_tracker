@@ -2,6 +2,7 @@ package com.mikaauer.vacation;
 
 import com.mikaauer.vacation.Database.VacationDatabaseConnector;
 import com.mikaauer.vacation.Model.Vacation;
+import com.mikaauer.vacation.Model.VacationDTO;
 import com.mikaauer.vacation.Model.VacationResponse;
 import com.mikaauer.vacation.Validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,8 @@ public class VacationController {
                     vacations = databaseConnector.getVacations(getUsername(authorization));
                 }
 
-                VacationResponse response = new VacationResponse(vacations);
+                // TODO: Replace restVacationDays with computed value
+                VacationResponse response = new VacationResponse(vacations, 14);
                 return ResponseEntity.ok(response);
             }
         }catch (Exception e){
@@ -54,7 +56,8 @@ public class VacationController {
             if(validator.validate(authorization)){
                 List<Vacation> vacations = databaseConnector.getFutureVacations(getUsername(authorization));
 
-                VacationResponse response = new VacationResponse(vacations);
+                // TODO: Replace restVacationDays with computed value
+                VacationResponse response = new VacationResponse(vacations, 14);
                 return ResponseEntity.ok(response);
             }
         }catch (Exception e){
@@ -63,6 +66,23 @@ public class VacationController {
 
         return ResponseEntity.notFound().build();
     }
+
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<Vacation> handleVacationPostRequest(@RequestBody VacationDTO body,
+                                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization){
+        try {
+            if ((new Validator()).validate(authorization)) {
+                Vacation vacation = new Vacation(body.getStartingDate(), body.getEndDate(), getUsername(authorization));
+                databaseConnector.insertVacation(vacation);
+                return ResponseEntity.ok(vacation);
+            }
+        }catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.badRequest().build();
+    }
+
 
     private String getUsername(String authorization) throws IllegalAccessException {
         if (authorization.startsWith("Basic ")) {

@@ -100,10 +100,15 @@ class TimeEnteringForm extends Component {
         }
 
         var url = "http://localhost:8080/time";
+
+        var hashedUsername = md5(Cookies.get("Username"));
+        var token = Cookies.get("Token");
+
         const requestOptions = {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
+                'Authorization': ("Basic " + hashedUsername + ":" + token)
             },
             body: JSON.stringify({
                 date: this.state.date,

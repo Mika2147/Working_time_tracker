@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Table from 'react-bootstrap/Table';
-import Pagination from 'react-bootstrap/Pagination';
 import MonthPagination from './MonthPagination';
 import { Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';

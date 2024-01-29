@@ -2,21 +2,52 @@ import React, { Component } from 'react';
 import { Button, Stack } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
 import Table from 'react-bootstrap/Table';
+import Cookies from 'js-cookie';
+import { md5 } from 'js-md5';
 
 class Vacation extends Component {
-    state = { items: [
-                        {
-                            startingDate: "1.1.2024",
-                            endDate: "31.1.2024",
-                            vacationDays: 22,
-                            accepted: true,
-                        },
-                    ], 
-                    restVacationDays: 8,
-                } 
+    state = { items: [], 
+                restVacationDays: 0,
+            } 
 
     rowClicked = (navigation, id) => {
         console.log("row " + id + " clicked");
+    }
+
+    componentDidMount(){
+        this.fetchEntries();
+     }
+
+    fetchEntries(){
+        var url = "http://localhost:8081/vacation/future";
+
+        var hashedUsername = md5(Cookies.get("Username"));
+        var token = Cookies.get("Token");
+
+        const requestOptions = {
+            method: 'GET',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': ("Basic " + hashedUsername + ":" + token)
+            },
+        };
+
+        fetch(url, requestOptions)
+        .then(res => res.json())
+        .then(
+        (result) => {
+          this.setState({
+            items: result.items,
+            restVacationDays: result.restVacationDays,
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      )
     }
 
     render() { 

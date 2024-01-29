@@ -13,5 +13,5 @@ public class DatabaseConstants {
     public static final String KEY_END_YEAR = "end_year";
     public static final String KEY_USERNAME = "username";
     public static final String KEY_ID = "id";
-
+    public static final String KEY_ACCEPTED = "accepted";
 }

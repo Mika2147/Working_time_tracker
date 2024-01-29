@@ -1,6 +1,11 @@
 package com.mikaauer.vacation.Model;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Vacation {
     private int id;
@@ -12,7 +17,10 @@ public class Vacation {
     private int endYear;
     private String username;
 
-    public Vacation(int id, int startingDay, int startingMonth, int startingYear, int endDay, int endMonth, int endYear, String username) {
+    private boolean accepted;
+
+
+    public Vacation(int id, int startingDay, int startingMonth, int startingYear, int endDay, int endMonth, int endYear, String username, boolean accepted) {
         this.id = id;
         this.startingDay = startingDay;
         this.startingMonth = startingMonth;
@@ -21,6 +29,23 @@ public class Vacation {
         this.endMonth = endMonth;
         this.endYear = endYear;
         this.username = username;
+        this.accepted = accepted;
+    }
+
+    public Vacation(String startingDate, String endDate, String username){
+        this.id = createID();
+
+        this.startingDay = getDay(startingDate);
+        this.startingMonth = getMonth(startingDate);
+        this.startingYear = getYear(startingDate);
+
+        this.endDay = getDay(endDate);
+        this.endMonth = getMonth(endDate);
+        this.endYear = getYear(endDate);
+
+        this.username = username;
+
+        this.accepted = false;
     }
 
     public int getId() {
@@ -87,6 +112,27 @@ public class Vacation {
         this.username = username;
     }
 
+    public void setAccepted(boolean accepted) {
+        this.accepted = accepted;
+    }
+
+    // TODO: compute this
+    public int getVacationDays(){
+        return 10;
+    }
+
+    public boolean isAccepted(){
+        return accepted;
+    }
+
+    public String getStartingDate(){
+        return startingDay + "." + startingMonth + "." +startingYear;
+    }
+
+    public String getEndDate(){
+        return endDay + "." + endMonth + "." + endYear;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -98,5 +144,27 @@ public class Vacation {
     @Override
     public int hashCode() {
         return Objects.hash(id, startingDay, startingMonth, startingYear, endDay, endMonth, endYear, username);
+    }
+
+    public static int createID(){
+        return (int)(new Date()).getTime();
+    }
+
+    private static int getDay(String date){
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d.M.yyyy", Locale.GERMAN);
+        LocalDate itemDate = LocalDate.parse(date, dateFormatter);
+        return itemDate.getDayOfMonth();
+    }
+
+    private static int getMonth(String date){
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d.M.yyyy", Locale.GERMAN);
+        LocalDate itemDate = LocalDate.parse(date, dateFormatter);
+        return itemDate.getMonthValue();
+    }
+
+    private static int getYear(String date){
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d.M.yyyy", Locale.GERMAN);
+        LocalDate itemDate = LocalDate.parse(date, dateFormatter);
+        return itemDate.getYear();
     }
 }

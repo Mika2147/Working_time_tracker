@@ -30,7 +30,6 @@ function Login(props){
         .then(res => res.text())
         .then(
         (result) => {
-            debugger;
             if (result !== "") {
                 Cookies.set("Token", result)
                 Cookies.set("Username", username)

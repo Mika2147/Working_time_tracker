@@ -179,8 +179,9 @@ public class VacationDatabaseConnector {
         int documentEndYear = document.getInteger(DatabaseConstants.KEY_END_YEAR);
         String documentUsername = document.getString(DatabaseConstants.KEY_USERNAME);
         int documentId = document.getInteger(DatabaseConstants.KEY_ID);
+        //boolean documentAccepted = document.getBoolean(DatabaseConstants.KEY_ACCEPTED);
 
-        Vacation vacation = new Vacation(documentId,documentStartDay, documentStartMonth, documentStartYear, documentEndDay, documentEndMonth, documentEndYear, documentUsername);
+        Vacation vacation = new Vacation(documentId,documentStartDay, documentStartMonth, documentStartYear, documentEndDay, documentEndMonth, documentEndYear, documentUsername, false);
         return vacation;
     }
 

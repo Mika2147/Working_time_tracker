@@ -3,7 +3,8 @@ import { Button, Stack } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { useNavigate } from 'react-router-dom';
-
+import Cookies from 'js-cookie';
+import { md5 } from 'js-md5';
 
 class VacationForm extends Component {
     state = {
@@ -15,8 +16,44 @@ class VacationForm extends Component {
         }
     }
 
+    submitEntry = (navigation) => {
+        if(this.state.error.startingDate){
+            return;
+        }
+        if(this.state.error.endDate){
+            return;
+        }
+        
+        var url = "http://localhost:8081/vacation";
+
+        var hashedUsername = md5(Cookies.get("Username"));
+        var token = Cookies.get("Token");
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': ("Basic " + hashedUsername + ":" + token)
+            },
+            body: JSON.stringify({
+                startingDate: this.state.startingDate,
+                endDate: this.state.endDate,
+            })
+        };
+
+        fetch(url, requestOptions)
+        .then(res => {
+            if (res.status > 199 && res.status < 300){
+                navigation("/vacation");
+            }
+        },
+        (error) => {
+          console.log(error)
+        });
+    }
+
+
     setStartingDate = (value) => {
-        debugger;
         let state = this.state;        
 
         state.startingDate = value;
@@ -30,10 +67,6 @@ class VacationForm extends Component {
         state.endDate = value;
         state = this.searchFormErrors(state)
         this.setState(state);
-    }
-
-    submitEntry = (navigation) => {
-        navigation("/vacation");
     }
 
     searchFormErrors = (state) => {
