@@ -56,8 +56,14 @@ public class VacationController {
             if(validator.validate(authorization)){
                 List<Vacation> vacations = databaseConnector.getFutureVacations(getUsername(authorization));
 
-                // TODO: Replace restVacationDays with computed value
-                VacationResponse response = new VacationResponse(vacations, 14);
+                //TODO: calculate with individual vacation days
+                int restVacationDays = 30;
+
+                for(Vacation vacation: vacations){
+                    restVacationDays = restVacationDays - vacation.getVacationDays();
+                }
+
+                VacationResponse response = new VacationResponse(vacations, restVacationDays);
                 return ResponseEntity.ok(response);
             }
         }catch (Exception e){
@@ -73,8 +79,9 @@ public class VacationController {
         try {
             if ((new Validator()).validate(authorization)) {
                 Vacation vacation = new Vacation(body.getStartingDate(), body.getEndDate(), getUsername(authorization));
-                databaseConnector.insertVacation(vacation);
-                return ResponseEntity.ok(vacation);
+                if(databaseConnector.insertVacation(vacation)){
+                    return ResponseEntity.ok(vacation);
+                }
             }
         }catch (Exception e){
             return ResponseEntity.badRequest().build();

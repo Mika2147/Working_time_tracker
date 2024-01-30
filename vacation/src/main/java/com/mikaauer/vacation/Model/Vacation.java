@@ -2,10 +2,7 @@ package com.mikaauer.vacation.Model;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class Vacation {
     private int id;
@@ -118,7 +115,10 @@ public class Vacation {
 
     // TODO: compute this
     public int getVacationDays(){
-        return 10;
+        Date start = new GregorianCalendar(startingYear, startingMonth - 1, startingDay).getTime();
+        Date end = new GregorianCalendar(endYear, endMonth - 1, endDay).getTime();
+
+        return  getWorkingDaysBetweenTwoDates(start, end);
     }
 
     public boolean isAccepted(){
@@ -166,5 +166,29 @@ public class Vacation {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d.M.yyyy", Locale.GERMAN);
         LocalDate itemDate = LocalDate.parse(date, dateFormatter);
         return itemDate.getYear();
+    }
+
+    private static int getWorkingDaysBetweenTwoDates(Date startDate, Date endDate) {
+        Calendar startCal = Calendar.getInstance();
+        startCal.setTime(startDate);
+
+        Calendar endCal = Calendar.getInstance();
+        endCal.setTime(endDate);
+
+        int workDays = 0;
+
+        if (startCal.getTimeInMillis() >= endCal.getTimeInMillis()) {
+            return 0;
+        }
+
+        while (startCal.getTimeInMillis() <= endCal.getTimeInMillis()) {
+            // TODO: check for holidays
+            if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+                workDays++;
+            }
+            startCal.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        return workDays;
     }
 }

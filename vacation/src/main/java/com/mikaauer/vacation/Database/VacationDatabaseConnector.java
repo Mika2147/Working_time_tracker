@@ -11,10 +11,9 @@ import org.bson.conversions.Bson;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+
 
 @Component
 public class VacationDatabaseConnector {
@@ -25,6 +24,29 @@ public class VacationDatabaseConnector {
     }
 
     public boolean insertVacation(Vacation vacation){
+        // TODO: Check if there is already a vacation in the given time range
+        List<Vacation> bookedVacations = getVacations(vacation.getUsername());
+
+        Date start = new GregorianCalendar(vacation.getStartingYear(), vacation.getStartingMonth(), vacation.getStartingDay()).getTime();
+        Date end = new GregorianCalendar(vacation.getEndYear(), vacation.getEndMonth(), vacation.getEndDay()).getTime();
+
+        if (start.getTime() > end.getTime()){
+            return false;
+        }
+
+        for(Vacation comparisonVacation: bookedVacations){
+            Date comparisonStart = new GregorianCalendar(comparisonVacation.getStartingYear(), comparisonVacation.getStartingMonth(), comparisonVacation.getStartingDay()).getTime();
+            Date comparisonEnd = new GregorianCalendar(comparisonVacation.getEndYear(), comparisonVacation.getEndMonth(), comparisonVacation.getEndDay()).getTime();
+
+            if(start.getTime() < comparisonStart.getTime() && end.getTime() > comparisonStart.getTime()){
+                return false;
+            }
+
+            if(start.getTime() > comparisonStart.getTime() && end.getTime() < comparisonEnd.getTime()){
+                return false;
+            }
+        }
+
         MongoDatabase database = mongoClient.getDatabase(DatabaseConstants.TIME_DATABASE_NAME);
         MongoCollection<Document> collection = database.getCollection(DatabaseConstants.VACATION_COLLECTION_NAME);
 
