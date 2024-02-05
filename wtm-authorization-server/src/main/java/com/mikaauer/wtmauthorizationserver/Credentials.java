@@ -3,10 +3,12 @@ package com.mikaauer.wtmauthorizationserver;
 public class Credentials {
     private String username;
     private String password;
+     private boolean isAdmin;
 
-    public Credentials(String username, String password) {
+    public Credentials(String username, String password, boolean isAdmin) {
         this.username = username;
         this.password = password;
+        this.isAdmin = isAdmin;
     }
 
     public String getUsername() {
@@ -23,5 +25,13 @@ public class Credentials {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
     }
 }

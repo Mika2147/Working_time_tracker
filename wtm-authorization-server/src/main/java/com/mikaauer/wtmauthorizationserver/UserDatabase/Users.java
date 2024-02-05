@@ -1,6 +1,7 @@
 package com.mikaauer.wtmauthorizationserver.UserDatabase;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @UuidGenerator
     private UUID id;
 
     @Column(nullable = false, unique = true)

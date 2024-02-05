@@ -1,10 +1,8 @@
 package com.mikaauer.wtmauthorizationserver;
 
 import com.mikaauer.wtmauthorizationserver.Token.TokenManager;
-import com.mikaauer.wtmauthorizationserver.UserDatabase.UserDatabaseConnector;
 import com.mikaauer.wtmauthorizationserver.UserDatabase.UserRepository;
 import com.mikaauer.wtmauthorizationserver.UserDatabase.Users;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +15,6 @@ import java.util.Optional;
 @RequestMapping(path = "/login")
 @SessionScope
 public class WtmAuthorizationServerLoginController {
-
-    UserDatabaseConnector userDatabaseConnector = new UserDatabaseConnector();
 
     private final UserRepository userRepository;
 

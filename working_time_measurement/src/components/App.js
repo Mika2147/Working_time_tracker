@@ -9,6 +9,8 @@ import TimeExport from './Time/TimeExport';
 import Login from './Login';
 import CheckLoginWrapper from './CheckLoginWrapper';
 import VacationForm from './Vacation/VacationForm';
+import UserManagement from './Users/UserManagement';
+import UserRegistrationForm from './Users/UserRegistartionForm';
 
 class App extends Component {
     state = {  } 
@@ -22,6 +24,9 @@ class App extends Component {
                     <Route path="/time-measurement" element={<CheckLoginWrapper><TimeMeasurementStart /></CheckLoginWrapper>}/>
                     <Route path="/vacation" element={<CheckLoginWrapper><Vacation /></CheckLoginWrapper>}/>
                     <Route path="/vacation/new" element={<CheckLoginWrapper><VacationForm /></CheckLoginWrapper>}/>
+
+                    <Route path="/users" element={<CheckLoginWrapper><UserManagement /></CheckLoginWrapper>}/>
+                    <Route path="/users/new" element={<CheckLoginWrapper><UserRegistrationForm /></CheckLoginWrapper>}/>
 
                     <Route path="/time-measurement/day" element={<CheckLoginWrapper><TimeEnteringForm /></CheckLoginWrapper>}/>
                     <Route path="/time-measurement/overview" element={<CheckLoginWrapper><TimeMonthOverview /></CheckLoginWrapper>}/>

@@ -7,7 +7,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TokenManager {
-    Long TOKEN_LIFETIME = 900L;
+    Long TOKEN_LIFETIME = 900000L;
     Long TOKEN_LENGTH = 128L;
 
     private static TokenManager shared;
@@ -39,7 +39,7 @@ public class TokenManager {
                 }
             }
         }
-        return true;
+        return false;
     }
 
     public Token generateNewToken(String username, boolean isAdmin){
