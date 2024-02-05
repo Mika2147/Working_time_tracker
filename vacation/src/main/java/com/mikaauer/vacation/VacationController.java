@@ -38,15 +38,9 @@ public class VacationController {
                     vacations = databaseConnector.getVacations(getUsername(authorization));
                 }
 
-                int restVacationDays = 30;
+                sortVacations(vacations);
 
-                if(year.isEmpty()){
-                    year = Optional.of(Calendar.getInstance().get(Calendar.YEAR));
-                }
-
-                for(Vacation vacation: vacations){
-                    restVacationDays = restVacationDays - Utils.getVacationDaysInYear(vacation, year.get());
-                }
+                int restVacationDays = calculateRestVacationDays(vacations, year);
 
                 // TODO: Replace restVacationDays with computed value
                 VacationResponse response = new VacationResponse(vacations, restVacationDays);
@@ -65,15 +59,12 @@ public class VacationController {
             if(validator.validate(authorization)){
                 List<Vacation> vacations = databaseConnector.getFutureVacations(getUsername(authorization));
 
-                //TODO: calculate with individual vacation days
-                int restVacationDays = 30;
-
                 int year = Calendar.getInstance().get(Calendar.YEAR);
                 List<Vacation> vacationsInYear = databaseConnector.getVacations(year, getUsername(authorization));
 
-                for(Vacation vacation: vacationsInYear){
-                    restVacationDays = restVacationDays - Utils.getVacationDaysInYear(vacation, year);
-                }
+                sortVacations(vacations);
+
+                int restVacationDays = calculateRestVacationDays(vacations, Optional.empty());
 
                 VacationResponse response = new VacationResponse(vacations, restVacationDays);
                 return ResponseEntity.ok(response);
@@ -106,7 +97,6 @@ public class VacationController {
     private String getUsername(String authorization) throws IllegalAccessException {
         if (authorization.startsWith("Basic ")) {
             String[] auth = authorization.split("Basic ")[1].split(":");
-            // TODO: Validate user here and create token
             if (auth.length > 1) {
                 return auth[0];
             } else {
@@ -115,5 +105,35 @@ public class VacationController {
         } else {
             throw new IllegalAccessException("Authorization Header is not valid");
         }
+    }
+
+    private void sortVacations(List<Vacation> vacations){
+        vacations.sort(new Comparator<Vacation>() {
+            @Override
+            public int compare(Vacation o1, Vacation o2) {
+                Date start1 = new GregorianCalendar(o1.getStartingDay(), o1.getStartingMonth() - 1, o1.getStartingDay()).getTime();
+                Date start2 = new GregorianCalendar(o2.getStartingYear(), o2.getStartingMonth() - 1, o2.getStartingDay()).getTime();
+
+                return start1.compareTo(start2);
+            }
+        });
+    }
+
+    private int calculateRestVacationDays(List<Vacation> sortedVacations, Optional<Integer> year){
+        //TODO: calculate with individual vacation days
+        int restVacationDays = 30;
+
+        if(year.isEmpty()){
+            year = Optional.of(Calendar.getInstance().get(Calendar.YEAR));
+        }
+
+        for(Vacation vacation: sortedVacations){
+            if(vacation.getStartingYear() > year.get()){
+                return restVacationDays;
+            }
+            restVacationDays = restVacationDays - Utils.getVacationDaysInYear(vacation, year.get());
+        }
+
+        return restVacationDays;
     }
 }

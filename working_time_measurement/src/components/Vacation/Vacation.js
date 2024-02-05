@@ -9,6 +9,7 @@ import YearPagination from './YearPagination';
 class Vacation extends Component {
     state = { items: [], 
                 restVacationDays: 0,
+                year: (new Date()).getFullYear(),
             } 
 
     rowClicked = (navigation, id) => {
@@ -20,7 +21,7 @@ class Vacation extends Component {
      }
 
     fetchEntries(){
-        var url = "http://localhost:8081/vacation/future";
+        var url = "http://localhost:8081/vacation?year=" + this.state.year;
 
         var hashedUsername = md5(Cookies.get("Username"));
         var token = Cookies.get("Token");
@@ -51,10 +52,17 @@ class Vacation extends Component {
       )
     }
 
+    selectionChanged = (year) => {
+        let state = this.state;
+        state.year = year;
+        this.setState(state);
+        this.fetchEntries();
+    }
+
     render() { 
         return (<React.Fragment>
             <div className='main-container'>
-            <Stack direction="vertical" gap={3}>
+            <Stack direction="vertical" gap={3} className='central_alignment'>
                 <Link to="/vacation/new">
                     <Button>New Entry</Button>
                 </Link>
@@ -74,7 +82,7 @@ class Vacation extends Component {
                 <div>
                     Rest Vacation Days: {this.state.restVacationDays}
                 </div>
-                <YearPagination year={2024}/>
+                <YearPagination year={this.state.year} callback={(year) => this.selectionChanged(year)}/>
             </Stack>
             </div>
         </React.Fragment>);

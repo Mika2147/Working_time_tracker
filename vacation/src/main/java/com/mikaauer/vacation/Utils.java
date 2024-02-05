@@ -1,5 +1,6 @@
 package com.mikaauer.vacation;
 
+import com.mikaauer.vacation.Holidays.HolidayManager;
 import com.mikaauer.vacation.Model.Vacation;
 
 import java.util.Calendar;
@@ -24,7 +25,9 @@ public class Utils {
         while (startCal.getTimeInMillis() <= endCal.getTimeInMillis()) {
             // TODO: check for holidays
             if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-                workDays++;
+                if(!HolidayManager.getInstance().isHoliday(startCal.get(Calendar.DAY_OF_MONTH), startCal.get(Calendar.MONTH) + 1, startCal.get(Calendar.YEAR))){
+                    workDays++;
+                }
             }
             startCal.add(Calendar.DAY_OF_MONTH, 1);
         }
