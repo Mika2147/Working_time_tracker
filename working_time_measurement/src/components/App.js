@@ -4,11 +4,11 @@ import TimeMeasurementStart from './Time/TimeMeasurmentStart';
 import TimeEnteringForm from './Time/TimeEnteringForm';
 import TimeMonthOverview from './Time/TimeMonthOverview';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Vacation from './Vacation';
+import Vacation from './Vacation/Vacation';
 import TimeExport from './Time/TimeExport';
 import Login from './Login';
 import CheckLoginWrapper from './CheckLoginWrapper';
-import VacationForm from './VacationForm';
+import VacationForm from './Vacation/VacationForm';
 
 class App extends Component {
     state = {  } 
@@ -16,7 +16,6 @@ class App extends Component {
         return <React.Fragment>
             <BrowserRouter>
             <NavigationBar/>
-
                 <Routes>
                     <Route path="/login" element={<Login />}/>
                     <Route path="/" element={<CheckLoginWrapper><TimeMeasurementStart /></CheckLoginWrapper>}/>

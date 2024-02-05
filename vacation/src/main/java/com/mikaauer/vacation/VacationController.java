@@ -11,8 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -39,8 +38,18 @@ public class VacationController {
                     vacations = databaseConnector.getVacations(getUsername(authorization));
                 }
 
+                int restVacationDays = 30;
+
+                if(year.isEmpty()){
+                    year = Optional.of(Calendar.getInstance().get(Calendar.YEAR));
+                }
+
+                for(Vacation vacation: vacations){
+                    restVacationDays = restVacationDays - Utils.getVacationDaysInYear(vacation, year.get());
+                }
+
                 // TODO: Replace restVacationDays with computed value
-                VacationResponse response = new VacationResponse(vacations, 14);
+                VacationResponse response = new VacationResponse(vacations, restVacationDays);
                 return ResponseEntity.ok(response);
             }
         }catch (Exception e){
@@ -59,8 +68,11 @@ public class VacationController {
                 //TODO: calculate with individual vacation days
                 int restVacationDays = 30;
 
-                for(Vacation vacation: vacations){
-                    restVacationDays = restVacationDays - vacation.getVacationDays();
+                int year = Calendar.getInstance().get(Calendar.YEAR);
+                List<Vacation> vacationsInYear = databaseConnector.getVacations(year, getUsername(authorization));
+
+                for(Vacation vacation: vacationsInYear){
+                    restVacationDays = restVacationDays - Utils.getVacationDaysInYear(vacation, year);
                 }
 
                 VacationResponse response = new VacationResponse(vacations, restVacationDays);

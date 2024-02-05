@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import Table from 'react-bootstrap/Table';
 import Cookies from 'js-cookie';
 import { md5 } from 'js-md5';
+import YearPagination from './YearPagination';
 
 class Vacation extends Component {
     state = { items: [], 
@@ -73,6 +74,7 @@ class Vacation extends Component {
                 <div>
                     Rest Vacation Days: {this.state.restVacationDays}
                 </div>
+                <YearPagination year={2024}/>
             </Stack>
             </div>
         </React.Fragment>);
