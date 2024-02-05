@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Stack } from 'react-bootstrap';
+import { Button, CloseButton, Stack } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { useNavigate } from 'react-router-dom';
@@ -50,6 +50,10 @@ class VacationForm extends Component {
         (error) => {
           console.log(error)
         });
+    }
+
+    closeForm = (navigation) => {
+        navigation("/vacation");
     }
 
 
@@ -113,7 +117,10 @@ class VacationForm extends Component {
         return (<React.Fragment>
             <div className='main-container'>
                 <Stack direction="vertical" gap={3}>
-                    <div className="page-title">Vacation Entry</div>
+                    <Stack direction='horizontal'>
+                        <div className="page-title">Vacation Entry</div>
+                        <CloseFormButton closeFunction={this.closeForm}/>
+                    </Stack>
                     <div className="form-subtitle">Starting Date</div>
                     <InputGroup className="mb-3">
                         <InputGroup.Text>Date</InputGroup.Text>
@@ -138,6 +145,16 @@ function SubmitButton(props){
             props.submitFunction(navigation)
             }
         }>Submit</Button>
+    )
+}
+
+function CloseFormButton(props){
+    const navigation = useNavigate();
+    return(
+        <CloseButton onClick={() => {
+            props.closeFunction(navigation)
+            }
+        }/>
     )
 }
  
