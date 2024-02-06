@@ -26,6 +26,20 @@ public class TokenManager {
         return shared;
     }
 
+    public boolean validate(String authorization, boolean needsAdminRights){
+        if(authorization.startsWith("Basic ")) {
+            String auth = authorization.split("Basic ")[1];
+            String[] splitted = auth.split(":");
+            String username = splitted[0];
+            String tokenString = splitted[1];
+
+            if (TokenManager.getInstance().validate(username, tokenString, needsAdminRights)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
     public boolean validate(String username, String tokenString, boolean needsAdminRights){
         if(tokenMap.containsKey(username)){
             Token token = tokenMap.get(username);

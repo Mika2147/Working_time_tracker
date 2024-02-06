@@ -11,6 +11,7 @@ import CheckLoginWrapper from './CheckLoginWrapper';
 import VacationForm from './Vacation/VacationForm';
 import UserManagement from './Users/UserManagement';
 import UserRegistrationForm from './Users/UserRegistartionForm';
+import UserEditForm from './Users/UserEditFrom';
 
 class App extends Component {
     state = {  } 
@@ -27,6 +28,7 @@ class App extends Component {
 
                     <Route path="/users" element={<CheckLoginWrapper><UserManagement /></CheckLoginWrapper>}/>
                     <Route path="/users/new" element={<CheckLoginWrapper><UserRegistrationForm /></CheckLoginWrapper>}/>
+                    <Route path="/users/edit" element={<CheckLoginWrapper><UserEditForm /></CheckLoginWrapper>}/>
 
                     <Route path="/time-measurement/day" element={<CheckLoginWrapper><TimeEnteringForm /></CheckLoginWrapper>}/>
                     <Route path="/time-measurement/overview" element={<CheckLoginWrapper><TimeMonthOverview /></CheckLoginWrapper>}/>

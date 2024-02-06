@@ -1,4 +1,4 @@
-package com.mikaauer.wtmauthorizationserver.UserDatabase;
+package com.mikaauer.wtmauthorizationserver.User;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;

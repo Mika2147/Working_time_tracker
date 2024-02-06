@@ -1,8 +1,8 @@
 package com.mikaauer.wtmauthorizationserver;
 
 import com.mikaauer.wtmauthorizationserver.Token.TokenManager;
-import com.mikaauer.wtmauthorizationserver.UserDatabase.UserRepository;
-import com.mikaauer.wtmauthorizationserver.UserDatabase.Users;
+import com.mikaauer.wtmauthorizationserver.User.UserDatabase.UserRepository;
+import com.mikaauer.wtmauthorizationserver.User.Users;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

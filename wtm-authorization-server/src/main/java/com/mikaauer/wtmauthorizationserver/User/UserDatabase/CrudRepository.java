@@ -1,4 +1,4 @@
-package com.mikaauer.wtmauthorizationserver.UserDatabase;
+package com.mikaauer.wtmauthorizationserver.User.UserDatabase;
 
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.Repository;
