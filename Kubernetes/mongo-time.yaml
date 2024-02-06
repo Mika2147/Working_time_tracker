@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-time
+  namespace: working-time-measurement
+spec:
+  ports:
+    - name: web
+      port: 27017
+      targetPort: 9998
+  selector:
+    app: mongo-time
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-time
+  namespace: working-time-measurement
+spec:
+  selector:
+    matchLabels:
+      app: mongo-time
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mongo-time
+    spec:
+      containers:
+        - image: mongo
+          name: mongo-time
+          imagePullPolicy: Never
+          env:
+            - name: BASE_USER_NAME
+              value: admin
+            - name: BASE_USER_PASSWORD
+              value: admin
+---

@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vacation-backend
+  namespace: working-time-measurement
+spec:
+  ports:
+    - name: web
+      port: 8080
+      targetPort: 8081
+  selector:
+    app: vacation-backend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vacation-backend
+  namespace: working-time-measurement
+spec:
+  selector:
+    matchLabels:
+      app: vacation-backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: vacation-backend
+    spec:
+      containers:
+        - image: vacation-backend
+          name: vacation-backend
+          imagePullPolicy: Never
+          env:
+            - name: AUTHORIZATION_SERVICE_PATH
+              value: http://authorization.working-time-measurement.svc.cluster.local:8080
+---

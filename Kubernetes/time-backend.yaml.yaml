@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: time-backend
+  namespace: working-time-measurement
+spec:
+  ports:
+    - name: web
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: time-backend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: time-backend
+  namespace: working-time-measurement
+spec:
+  selector:
+    matchLabels:
+      app: time-backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: time-backend
+    spec:
+      containers:
+        - image: time-backend
+          name: time-backend
+          imagePullPolicy: Never
+          env:
+            - name: AUTHORIZATION_SERVICE_PATH
+              value: http://authorization.working-time-measurement.svc.cluster.local:8080
+---
