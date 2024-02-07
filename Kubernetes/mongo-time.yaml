@@ -1,40 +1,36 @@
 ---
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: mongodb-time
+spec:
+  members: 3
+  type: ReplicaSet
+  version: "6.0.5"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: admin
+      db: admin
+      passwordSecretRef: # a reference to the secret that will be used to generate the user's password
+        name: user-password
+      roles:
+        - name: clusterAdmin
+          db: admin
+        - name: userAdminAnyDatabase
+          db: admin
+      scramCredentialsSecretName: scram
+  additionalMongodConfig:
+    storage.wiredTiger.engineConfig.journalCompressor: zlib
+
+# the user credentials will be generated from this secret
+# once the credentials are generated, this secret is no longer required
+---
 apiVersion: v1
-kind: Service
+kind: Secret
 metadata:
-  name: mongo-time
-  namespace: working-time-measurement
-spec:
-  ports:
-    - name: web
-      port: 27017
-      targetPort: 9998
-  selector:
-    app: mongo-time
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mongo-time
-  namespace: working-time-measurement
-spec:
-  selector:
-    matchLabels:
-      app: mongo-time
-  strategy:
-    type: Recreate
-  template:
-    metadata:
-      labels:
-        app: mongo-time
-    spec:
-      containers:
-        - image: mongo
-          name: mongo-time
-          imagePullPolicy: Never
-          env:
-            - name: BASE_USER_NAME
-              value: admin
-            - name: BASE_USER_PASSWORD
-              value: admin
----
+  name: user-password
+type: Opaque
+stringData:
+  password: admin
