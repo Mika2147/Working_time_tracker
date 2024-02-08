@@ -25,7 +25,8 @@ class TimeEnteringForm extends Component {
     }
 
     fetchEntry = () => {
-        var url = "http://localhost:8080/time/day";
+        var envUrl = process.env.REACT_APP_TIME_URL;
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/time/day";
         let state = this.state;
         const date = this.createDateFromDateString(state.date);
 
@@ -99,7 +100,8 @@ class TimeEnteringForm extends Component {
             return;
         }
 
-        var url = "http://localhost:8080/time";
+        var envUrl = process.env.REACT_APP_TIME_URL;
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/time";
 
         var hashedUsername = md5(Cookies.get("Username"));
         var token = Cookies.get("Token");

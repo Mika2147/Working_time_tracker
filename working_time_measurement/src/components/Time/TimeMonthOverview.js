@@ -22,7 +22,8 @@ class TimeMonthOverview extends Component {
      }
 
     fetchEntries(){
-        var url = "http://localhost:8080/time";
+        var envUrl = process.env.REACT_APP_TIME_URL;
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/time";
         if (this.state.month !== undefined){
             url = url + "?month=" + this.state.month
         }

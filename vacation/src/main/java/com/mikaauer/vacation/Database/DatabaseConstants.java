@@ -1,7 +1,7 @@
 package com.mikaauer.vacation.Database;
 
 public class DatabaseConstants {
-    public static String DATABASE_URL = "mongodb://admin:admin@0.0.0.0:9998/";
+    public static String DATABASE_URL = System.getenv("MONGO_DATABASE_URL") != null ? System.getenv("MONGO_DATABASE_URL") : "mongodb://admin:admin@0.0.0.0:9998/";
     public static String TIME_DATABASE_NAME = "VacationEntries";
     public static String VACATION_COLLECTION_NAME = "vacation";
 

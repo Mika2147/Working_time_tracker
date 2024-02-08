@@ -1,0 +1,81 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+ name: incoming-ingress
+ namespace: working-time-measurement
+ annotations:
+   nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+ ingressClassName: nginx
+ rules:
+ - http:
+     paths:
+     - path: /
+       pathType: Prefix
+       backend:
+         service:
+           name: wtm-frontend
+           port:
+             number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+ name: time-ingress
+ namespace: working-time-measurement
+ annotations:
+   nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+ ingressClassName: nginx
+ rules:
+ - http:
+     paths:
+     - path: /time(/|$)(.*)
+       pathType: Prefix
+       backend:
+         service:
+           name: time-backend
+           port:
+             number: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+ name: authorization-ingress
+ namespace: working-time-measurement
+ annotations:
+   nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+ ingressClassName: nginx
+ rules:
+ - http:
+     paths:
+     - path: /authorization(/|$)(.*)
+       pathType: Prefix
+       backend:
+         service:
+           name: authorization
+           port:
+             number: 8083
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+ name: vacation-ingress
+ namespace: working-time-measurement
+ annotations:
+   nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+ ingressClassName: nginx
+ rules:
+ - http:
+     paths:
+     - path: /vacation(/|$)(.*)
+       pathType: Prefix
+       backend:
+         service:
+           name: vacation-backend
+           port:
+             number: 8081
+---

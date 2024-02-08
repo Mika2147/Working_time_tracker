@@ -4,6 +4,7 @@ import com.mikaauer.wtmauthorizationserver.Token.TokenManager;
 import com.mikaauer.wtmauthorizationserver.User.UserDatabase.UserRepository;
 import com.mikaauer.wtmauthorizationserver.User.Users;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
@@ -40,8 +41,9 @@ public class WtmAuthorizationServerLoginController {
                         return ResponseEntity.ok(tokenString);
                     }
                 }
+                return ResponseEntity.status(401).build();
             }
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.badRequest().build();
     }
 }

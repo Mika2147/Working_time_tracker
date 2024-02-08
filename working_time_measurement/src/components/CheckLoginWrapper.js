@@ -9,7 +9,9 @@ function CheckLoginWrapper (props){
     const { children } = props; 
 
     useEffect(() => {
-        var url = "http://localhost:8083/token-validation";
+        var envUrl = process.env.REACT_APP_AUTHORIZATION_URL;
+
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "/token-validation";
         var hashedUsername = md5(Cookies.get("Username"));
         const token = Cookies.get("Token");
 

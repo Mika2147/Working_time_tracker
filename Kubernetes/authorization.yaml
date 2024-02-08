@@ -7,7 +7,7 @@ metadata:
 spec:
   ports:
     - name: web
-      port: 8080
+      port: 8083
       targetPort: 8083
   selector:
     app: authorization
@@ -33,6 +33,8 @@ spec:
           name: authorization
           imagePullPolicy: Never
           env:
+            - name: POSTGRES_DATABASE_URL
+              value: jdbc:postgresql://users-postgres.working-time-measurement.svc.cluster.local:5432/users
             - name: BASE_USER_NAME
               value: admin
             - name: BASE_USER_PASSWORD

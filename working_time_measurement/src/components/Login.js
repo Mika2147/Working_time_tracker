@@ -13,7 +13,8 @@ function Login(props){
     const [password, setPassword] = useState("");
 
     const login = () => {
-        var url = "http://localhost:8083/login";
+        var envUrl = process.env.REACT_APP_AUTHORIZATION_URL;
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "/login";
 
         var hashedUsername = md5(username);
         var hashedPassword = md5(password);

@@ -91,7 +91,9 @@ class UserRegistrationForm extends Component {
             return;
         }
 
-        var url = "http://localhost:8083/register";
+        var envUrl = process.env.REACT_APP_AUTHORIZATION_URL;
+
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "register";
 
         var hashedUsername = md5(Cookies.get("Username"));
         var token = Cookies.get("Token");

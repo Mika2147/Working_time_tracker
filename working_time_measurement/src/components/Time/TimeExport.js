@@ -60,7 +60,8 @@ class TimeExport extends Component {
     }
 
     createLink = (month, year) => {
-        var url = "http://localhost:8080/time/export";
+        var envUrl = process.env.REACT_APP_TIME_URL;
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/export";
         if (month !== undefined && year !== undefined){
             url = url + "?month=" + month;
             url = url + "&year=" + year;

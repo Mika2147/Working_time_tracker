@@ -2,17 +2,17 @@ server:
   port: 8083
 app:
   datasource:
-    jdbc-url: jdbc:postgresql://localhost:5432/users
-    username: postgres
-    password: password
+    jdbc-url: ${POSTGRES_DATABASE_URL:jdbc:postgresql://localhost:5432/users}
+    username: ${BASE_USER_NAME:postgres}
+    password: ${BASE_USER_PASSWORD:password}
     pool-size: 30
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/users
+    url: ${POSTGRES_DATABASE_URL:jdbc:postgresql://localhost:5432/users}
     jdbc-url: jdbc:postgresql://localhost:5432/users
     platform: postgres
-    username: postgres
-    password: password
+    username: ${BASE_USER_NAME:postgres}
+    password: ${BASE_USER_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

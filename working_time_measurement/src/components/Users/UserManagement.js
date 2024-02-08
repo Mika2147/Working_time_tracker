@@ -10,7 +10,9 @@ class UserManagement extends Component {
             }
 
     fetchEntries(){
-        var url = "http://localhost:8083/admin/users";
+        var envUrl = process.env.REACT_APP_AUTHORIZATION_URL;
+
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8083") +"/admin/users";
         
         var hashedUsername = md5(Cookies.get("Username"));
         var token = Cookies.get("Token");
@@ -42,7 +44,9 @@ class UserManagement extends Component {
     }
 
     deleteUser = (id) => {
-        var url = "http://localhost:8083/admin/users/" + id;
+        var envUrl = process.env.REACT_APP_AUTHORIZATION_URL;
+
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "/admin/users/" + id;
         
         var hashedUsername = md5(Cookies.get("Username"));
         var token = Cookies.get("Token");
