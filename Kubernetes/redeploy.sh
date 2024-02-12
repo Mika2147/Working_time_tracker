@@ -32,6 +32,7 @@ cd Kubernetes
 kubectl create secret generic postgres-secret --from-literal=password=admin
 
 kubectl apply -f postgres-users.yaml
+kubectl apply -f mongo-user.yaml
 kubectl apply -f mongo-time.yaml
 kubectl apply -f authorization.yaml
 kubectl apply -f time-backend.yaml

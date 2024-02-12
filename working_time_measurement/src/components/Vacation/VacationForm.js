@@ -26,7 +26,7 @@ class VacationForm extends Component {
         
         var envUrl = process.env.REACT_APP_VACATION_URL;
 
-        var url = (envUrl != undefined ? envUrl : "http://localhost:8081") + "vacation";
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8081") + "/vacation";
 
         var hashedUsername = md5(Cookies.get("Username"));
         var token = Cookies.get("Token");

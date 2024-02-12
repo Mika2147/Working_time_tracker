@@ -36,5 +36,5 @@ spec:
             - name: AUTHORIZATION_SERVICE_PATH
               value: http://authorization.working-time-measurement.svc.cluster.local:8083
             - name: MONGO_DATABASE_URL
-              value: mongodb://admin:admin@mongodb-time-svc.working-time-measurement.svc.cluster.local:27017
+              value: mongodb://user:password@mongodb-time-svc.working-time-measurement.svc.cluster.local:27017
 ---

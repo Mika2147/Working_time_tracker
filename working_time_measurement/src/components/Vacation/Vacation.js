@@ -21,7 +21,9 @@ class Vacation extends Component {
      }
 
     fetchEntries(){
-        var url = "http://localhost:8081/vacation?year=" + this.state.year;
+        var envUrl = process.env.REACT_APP_VACATION_URL;
+
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8081") + "/vacation?year=" + this.state.year;
 
         var hashedUsername = md5(Cookies.get("Username"));
         var token = Cookies.get("Token");
