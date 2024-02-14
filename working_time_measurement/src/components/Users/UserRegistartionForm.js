@@ -95,7 +95,7 @@ class UserRegistrationForm extends Component {
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "register";
 
-        var hashedUsername = md5(Cookies.get("Username"));
+        var hashedUsername = Cookies.get("Username");
         var token = Cookies.get("Token");
 
         const requestOptions = {
@@ -105,7 +105,7 @@ class UserRegistrationForm extends Component {
                 'Authorization': ("Basic " + hashedUsername + ":" + token)
             },
             body: JSON.stringify({
-                username: md5(this.state.username),
+                username: this.state.username,
                 password: md5(this.state.password),
                 isAdmin: this.state.isAdmin,
             })

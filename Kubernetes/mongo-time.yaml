@@ -5,7 +5,7 @@ metadata:
   name: mongodb-time
   namespace: working-time-measurement
 spec:
-  members: 3
+  members: 1
   type: ReplicaSet
   version: "6.0.5"
   security:
@@ -21,7 +21,7 @@ spec:
           db: admin
         - name: userAdminAnyDatabase
           db: admin
-      scramCredentialsSecretName: scram
+      scramCredentialsSecretName: user-password
     - name: user
       passwordSecretRef: # a reference to the secret that will be used to generate the user's password
         name: user
@@ -33,14 +33,4 @@ spec:
       scramCredentialsSecretName: user
   additionalMongodConfig:
     storage.wiredTiger.engineConfig.journalCompressor: zlib
-
-# the user credentials will be generated from this secret
-# once the credentials are generated, this secret is no longer required
 ---
-apiVersion: v1
-kind: Secret
-metadata:
-  name: user-password
-type: Opaque
-stringData:
-  password: admin

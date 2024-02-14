@@ -14,7 +14,7 @@ class UserManagement extends Component {
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8083") +"/admin/users";
         
-        var hashedUsername = md5(Cookies.get("Username"));
+        var hashedUsername = Cookies.get("Username");
         var token = Cookies.get("Token");
 
         const requestOptions = {
@@ -48,7 +48,7 @@ class UserManagement extends Component {
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "/admin/users/" + id;
         
-        var hashedUsername = md5(Cookies.get("Username"));
+        var hashedUsername = Cookies.get("Username");
         var token = Cookies.get("Token");
 
         const requestOptions = {

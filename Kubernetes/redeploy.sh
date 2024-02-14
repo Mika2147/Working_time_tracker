@@ -29,6 +29,7 @@ cd ..
 
 cd Kubernetes
 
+kubectl create namespace working-time-measurement
 kubectl create secret generic postgres-secret --from-literal=password=admin
 
 kubectl apply -f postgres-users.yaml

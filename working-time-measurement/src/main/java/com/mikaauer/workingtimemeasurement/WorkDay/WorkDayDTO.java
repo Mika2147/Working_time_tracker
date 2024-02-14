@@ -8,6 +8,9 @@ public class WorkDayDTO {
     private String endMinute;
     private String breakDuration;
 
+    private String tasks;
+    private String comment;
+
     public WorkDayDTO(String date, String startingHour, String startingMinute, String endHour, String endMinute, String breakDuration) {
         this.date = date;
         this.startingHour = startingHour;
@@ -39,5 +42,13 @@ public class WorkDayDTO {
 
     public String getBreakDuration() {
         return breakDuration;
+    }
+
+    public String getTasks() {
+        return tasks;
+    }
+
+    public String getComment() {
+        return comment;
     }
 }

@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +56,24 @@ public class WorkingTimeMeasurementController {
 
                 workDays.sort((WorkDay i1, WorkDay i2) -> Integer.compare(i1.getDay(), i2.getDay()));
 
-                WorkDayResponse response = new WorkDayResponse(workDays);
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(localYear, localMonth, 1);
+                Date start = calendar.getTime();
+
+                Date end;
+
+                if(now.getMonthValue() == localMonth && now.getYear() == localYear){
+                    calendar.set(localYear, localMonth, now.getDayOfMonth());
+                    end = calendar.getTime();
+                }else {
+                    calendar.set(localYear, localMonth, Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
+                    end = calendar.getTime();
+                }
+
+                // TODO: Make individual daily working hours
+                double neededWorkingHours = Utils.getWorkingDaysBetweenTwoDates(start, end) * 8;
+
+                WorkDayResponse response = new WorkDayResponse(workDays, neededWorkingHours);
 
                 ResponseEntity entity = ResponseEntity
                         .ok()
@@ -67,8 +86,7 @@ public class WorkingTimeMeasurementController {
             return ResponseEntity.badRequest().build();
         }
 
-
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(401).build();
     }
 
     @GetMapping()
@@ -120,7 +138,7 @@ public class WorkingTimeMeasurementController {
             if ((new Validator()).validate(authorization)) {
                 WorkDay object = new WorkDay(body.getDate(), body.getStartingHour() + ":" + body.getStartingMinute(),
                         body.getEndHour() + ":" + body.getEndMinute(), Integer.parseInt(body.getBreakDuration()),
-                        getUsername(authorization));
+                        getUsername(authorization), body.getTasks(), body.getComment());
                 databaseConnector.insertWorkday(object);
                 return ResponseEntity.ok(object);
             }

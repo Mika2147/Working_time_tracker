@@ -34,7 +34,7 @@ function logout() {
   var envUrl = process.env.REACT_APP_AUTHORIZATION_URL;
   var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "/logout";
   const token = Cookies.get("Token");
-  var hashedUsername = md5(Cookies.get("Username"));
+  var hashedUsername = Cookies.get("Username");
 
   const requestOptions = {
     method: 'GET',

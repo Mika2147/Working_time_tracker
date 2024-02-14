@@ -15,6 +15,7 @@ class TimeMonthOverview extends Component {
         items: [],
         month: ((new Date()).getMonth() + 1),
         year: (new Date()).getFullYear(),
+        timeBalance: 0.0,
      }
 
      componentDidMount(){
@@ -28,7 +29,7 @@ class TimeMonthOverview extends Component {
             url = url + "?month=" + this.state.month
         }
 
-        var hashedUsername = md5(Cookies.get("Username"));
+        var hashedUsername = Cookies.get("Username");
         var token = Cookies.get("Token");
 
         const requestOptions = {
@@ -43,10 +44,12 @@ class TimeMonthOverview extends Component {
         .then(res => res.json())
         .then(
         (result) => {
-          this.setState({
-            isLoaded: true,
-            items: result.items
-          });
+            let state = this.state;
+            state.items = result.items;
+            state.isLoaded = true;
+            state.timeBalance = result.timeBalance;
+            this.setState(state);
+            debugger;
         },
         (error) => {
           this.setState({
@@ -92,12 +95,15 @@ class TimeMonthOverview extends Component {
                             <th>End Time</th>
                             <th>Break Duration</th>
                             <th>Total Working Time</th>
+                            <th>Tasks</th>
+                            <th>Comment</th>
                         </tr>
                     </thead>
                     <tbody> 
-                    {this.state.items.map(item => <DayRow clicked={this.rowClicked} date={item.date} startingTime={item.startingTime} endTime={item.endTime} breakDuration={item.breakDuration} totalWorkingTime={item.totalWorkingTime}/>)}
+                    {this.state.items.map(item => <DayRow clicked={this.rowClicked} date={item.date} startingTime={item.startingTime} endTime={item.endTime} breakDuration={item.breakDuration} totalWorkingTime={item.totalWorkingTime} tasks={item.tasks} comment={item.comment}/>)}
                     </tbody>
                 </Table>
+                Time Balance: {this.state.timeBalance}
                 <MonthPagination month={this.state.month} year={this.state.year} callback={(month) => {
                     let state = this.state;
                     state.month = month;
@@ -119,6 +125,8 @@ function DayRow(props){
             <td>{props.endTime}</td>
             <td>{props.breakDuration}</td>
             <td>{Math.floor(props.totalWorkingTime / 60)}:{(props.totalWorkingTime % 60).toLocaleString("de-de", {minimumIntegerDigits: 2})}</td>
+            <td>{props.tasks}</td>
+            <td>{props.comment}</td>
             </tr>
     )
 }

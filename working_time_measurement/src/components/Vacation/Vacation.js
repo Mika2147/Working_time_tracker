@@ -25,7 +25,7 @@ class Vacation extends Component {
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8081") + "/vacation?year=" + this.state.year;
 
-        var hashedUsername = md5(Cookies.get("Username"));
+        var hashedUsername = Cookies.get("Username");
         var token = Cookies.get("Token");
 
         const requestOptions = {

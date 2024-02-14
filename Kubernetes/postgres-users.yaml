@@ -64,10 +64,11 @@ spec:
             - name: POSTGRES_USER 
               value: admin
             - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-secret
-                  key: password
+              value: admin
+              #valueFrom:
+              #  secretKeyRef:
+              #    name: postgres-secret
+              #    key: password
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
           ports:

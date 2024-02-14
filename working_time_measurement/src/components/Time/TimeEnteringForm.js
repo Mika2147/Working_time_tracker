@@ -14,6 +14,8 @@ class TimeEnteringForm extends Component {
         endHour: (this.props.endHour != undefined ? this.props.endHour :((new Date()).getHours()).toString()),
         endMinute: (this.props.endMinute != undefined ? this.props.endMinute :((new Date()).getMinutes()).toString()),
         breakDuration: (this.props.breakDuration != undefined ? this.props.breakDuration : "0"),
+        tasks: (this.props.tasks != undefined ? this.props.tasks : ""),
+        comment: (this.props.comment != undefined ? this.props.comment : ""),
         error: {
             date: false,
             startingHour: false,
@@ -21,6 +23,8 @@ class TimeEnteringForm extends Component {
             endHour: false,
             endMinute: false,
             breakDuration: false,
+            tasks: false,
+            comment: false,
         }
     }
 
@@ -30,7 +34,7 @@ class TimeEnteringForm extends Component {
         let state = this.state;
         const date = this.createDateFromDateString(state.date);
 
-        var hashedUsername = md5(Cookies.get("Username"));
+        var hashedUsername = Cookies.get("Username");
         var token = Cookies.get("Token");
 
         if (date !== undefined){
@@ -56,6 +60,8 @@ class TimeEnteringForm extends Component {
           state.endHour = result.endHour;
           state.endMinute = result.endMinute;
           state.breakDuration = result.breakDuration;
+          state.tasks = result.tasks;
+          state.comment = result.comment;
           state = this.searchFormErrors(state);
           this.setState(state);
 
@@ -99,11 +105,16 @@ class TimeEnteringForm extends Component {
         if(this.state.error.breakDuration === true){
             return;
         }
+        if(this.state.error.tasks === true){
+            return;
+        }if(this.state.error.comment === true){
+            return;
+        }
 
         var envUrl = process.env.REACT_APP_TIME_URL;
         var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/time";
 
-        var hashedUsername = md5(Cookies.get("Username"));
+        var hashedUsername = Cookies.get("Username");
         var token = Cookies.get("Token");
 
         const requestOptions = {
@@ -118,7 +129,9 @@ class TimeEnteringForm extends Component {
                 startingMinute: this.state.startingMinute,
                 endHour: this.state.endHour,
                 endMinute: this.state.endMinute,
-                breakDuration: this.state.breakDuration
+                breakDuration: this.state.breakDuration,
+                tasks: this.state.tasks,
+                comment: this.state.comment,
             })
         };
 
@@ -184,6 +197,22 @@ class TimeEnteringForm extends Component {
         let state = this.state;
        
         state.breakDuration = breakDuration;
+        state = this.searchFormErrors(state);
+        this.setState(state);
+    }
+
+    setTasks = (tasks) => {
+        let state = this.state;
+       
+        state.tasks = tasks;
+        state = this.searchFormErrors(state);
+        this.setState(state);
+    }
+
+    setComment = (comment) => {
+        let state = this.state;
+       
+        state.comment = comment;
         state = this.searchFormErrors(state);
         this.setState(state);
     }
@@ -318,6 +347,20 @@ class TimeEnteringForm extends Component {
                         <InputGroup className="mb-3">
                             <InputGroup.Text>Minutes</InputGroup.Text>
                             <Form.Control aria-label="Starting Hour" value={this.state.breakDuration} onChange={(e) => this.setBreakDuration(e.target.value)} type='number' required isInvalid={this.state.error.breakDuration}/>
+                        </InputGroup>
+                    </Stack>
+                    <div className="form-subtitle">Tasks</div>
+                    <Stack direction="horizontal" gap={3}>
+                        <InputGroup className="mb-3">
+                            <InputGroup.Text>Tasks</InputGroup.Text>
+                            <Form.Control aria-label="Tasks" value={this.state.tasks} onChange={(e) => this.setTasks(e.target.value)}  required isInvalid={this.state.error.tasks}/>
+                        </InputGroup>
+                    </Stack>
+                    <div className="form-subtitle">Comment</div>
+                    <Stack direction="horizontal" gap={3}>
+                        <InputGroup className="mb-3">
+                            <InputGroup.Text>Comment</InputGroup.Text>
+                            <Form.Control aria-label="Comment" value={this.state.comment} onChange={(e) => this.setComment(e.target.value)}  required isInvalid={this.state.error.comment}/>
                         </InputGroup>
                     </Stack>
                     <SubmitButton submitFunction={this.submitEntry} />

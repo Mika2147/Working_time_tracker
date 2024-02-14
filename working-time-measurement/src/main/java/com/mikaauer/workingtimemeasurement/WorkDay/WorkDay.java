@@ -20,9 +20,11 @@ public class WorkDay {
     private int endHour;
     private int endMinute;
     private int breakDuration;
+    private String tasks;
+    private String comment;
     private String username;
 
-    public WorkDay(String date, String startingTime, String endTime, int breakDuration, String username) {
+    public WorkDay(String date, String startingTime, String endTime, int breakDuration, String username, String tasks, String comment) {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d.M.yyyy", Locale.GERMAN);
         LocalDate itemDate = LocalDate.parse(date, dateFormatter);
         this.day = itemDate.getDayOfMonth();
@@ -47,11 +49,13 @@ public class WorkDay {
         }
 
         this.breakDuration = breakDuration;
+        this.tasks = tasks != null ? tasks : "";
+        this.comment = comment != null ? comment : "";
         this.username = username;
     }
 
     public WorkDay(int day, int month, int year, int startingHour, int startingMinute, int endHour, int endMinute,
-                   int breakDuration, String username) {
+                   int breakDuration, String username, String tasks, String comment) {
         this.day = day;
         this.month = month;
         this.year = year;
@@ -61,6 +65,8 @@ public class WorkDay {
         this.endMinute = endMinute;
         this.breakDuration = breakDuration;
         this.username = username;
+        this.tasks = tasks;
+        this.comment = comment;
     }
 
     public String getDate() {
@@ -114,6 +120,14 @@ public class WorkDay {
         return endMinute;
     }
 
+    public String getTasks() {
+        return tasks;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -148,6 +162,14 @@ public class WorkDay {
 
     public void setBreakDuration(int breakDuration) {
         this.breakDuration = breakDuration;
+    }
+
+    public void setTasks(String tasks) {
+        this.tasks = tasks;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public void setUsername(String username) {

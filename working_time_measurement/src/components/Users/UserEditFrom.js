@@ -83,7 +83,7 @@ class UserEditForm extends Component {
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "admin/users/" + this.state.id;
 
-        var hashedUsername = md5(Cookies.get("Username"));
+        var hashedUsername = Cookies.get("Username");
         var token = Cookies.get("Token");
 
         let password = this.state.password.trim().length > 0 ? md5(this.state.password) : "";

@@ -14,6 +14,8 @@ public class DatabaseConstants {
     public static String KEY_END_HOUR = "end_hour";
     public static String KEY_END_MINUTE = "end_minute";
     public static String KEY_BREAK_DURATION = "break_duration";
+    public static String KEY_TASKS = "tasks";
+    public static String KEY_COMMENT = "comment";
     public static final String KEY_USERNAME = "username";
 
 }
