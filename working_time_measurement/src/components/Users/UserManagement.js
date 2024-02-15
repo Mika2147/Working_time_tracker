@@ -80,6 +80,20 @@ class UserManagement extends Component {
         navigation(url);
     }
 
+    showTimeEntries = (name, navigation) => {
+        
+        var url = "/time-measurement/overview?username=" + name;
+
+        navigation(url);
+    }
+
+    showVacationEntries = (name, navigation) => {
+        
+        var url = "/vacation?username=" + name;
+
+        navigation(url);
+    }
+
     render() { 
         return (<React.Fragment>
             <div className='main-container'>
@@ -98,7 +112,7 @@ class UserManagement extends Component {
                             </tr>
                         </thead>
                         <tbody> 
-                        {this.state.items.map(item => <UserRow id={item.id} username={item.name} isAdmin={item.admin} deleteUser={this.deleteUser} changeUser={this.changeUser}/>)}
+                        {this.state.items.map(item => <UserRow id={item.id} username={item.name} isAdmin={item.admin} deleteUser={this.deleteUser} changeUser={this.changeUser} showTimeEntries={this.showTimeEntries} showVacationEntries={this.showVacationEntries}/>)}
                         </tbody>
                     </Table>
                 </Stack>
@@ -114,7 +128,11 @@ function UserRow(props){
             <td>{props.id}</td>
             <td>{props.username}</td>
             <td>{props.isAdmin ? "Yes" : "No"}</td>
-            <td><Button variant="primary" onClick={(() => props.changeUser(props.id, props.username, props.isAdmin, navigation))}>Edit</Button><Button variant="danger" onClick={() => props.deleteUser(props.id)}>Delete</Button></td>
+            <td>
+            {props.username !== "admin" ? <div><Button variant="primary" onClick={(() => props.changeUser(props.id, props.username, props.isAdmin, navigation))}>Edit</Button><Button variant="danger" onClick={() => props.deleteUser(props.id)}>Delete</Button></div> : <div></div>}
+            <Button variant="primary" onClick={(() => props.showTimeEntries(props.username, navigation))}>Working Times</Button>
+            <Button variant="primary" onClick={(() => props.showVacationEntries(props.username, navigation))}>Vacation</Button>
+            </td>
             <td></td>
         </tr>
     )

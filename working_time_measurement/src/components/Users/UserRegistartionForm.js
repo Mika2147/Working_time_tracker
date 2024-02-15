@@ -51,7 +51,6 @@ class UserRegistrationForm extends Component {
     }
 
     validateState = (state) => {
-        debugger;
         if(state.username.length > 5){
             state.error.username = false;
         }else{
@@ -93,7 +92,7 @@ class UserRegistrationForm extends Component {
 
         var envUrl = process.env.REACT_APP_AUTHORIZATION_URL;
 
-        var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "register";
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "/register";
 
         var hashedUsername = Cookies.get("Username");
         var token = Cookies.get("Token");

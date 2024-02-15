@@ -44,7 +44,8 @@ public class WtmAuthorizationServerAdminFeaturesController {
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Boolean> deleteUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @PathVariable UUID id) {
         if (TokenManager.getInstance().validate(authorization, true)) {
-            if(!id.equals(UUID.fromString("0e467611-4f82-4736-871f-f4095d770011"))){
+            Optional<Users> user = userRepository.findById(id);
+            if(user.isPresent() && !user.get().getName().equals("admin")){
                 userRepository.deleteById(id);
                 return ResponseEntity.ok(true);
             }

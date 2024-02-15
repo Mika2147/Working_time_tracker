@@ -173,9 +173,6 @@ const withQueryParamsHOC = (Component) =>{
     return <Component id={id} name={name} isAdmin={isAdmin}/>
 
     }
-    
-
-    return undefined;
 }
  
 export default withQueryParamsHOC(UserEditForm);

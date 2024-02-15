@@ -21,11 +21,11 @@ spec:
             - containerPort: 3000
           env: 
             - name: REACT_APP_AUTHORIZATION_URL
-              value: http://localhost/authorization
+              value: http://localhost/authorizationservice
             - name: REACT_APP_TIME_URL
-              value: http://localhost/time
+              value: http://localhost/timeservice
             - name: REACT_APP_VACATION_URL
-              value: http://localhost/vacation
+              value: http://localhost/vacationservice
 ---
 apiVersion: v1
 kind: Service

@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import Table from 'react-bootstrap/Table';
 import MonthPagination from './MonthPagination';
 import { Stack } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import { md5 } from 'js-md5';
-
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 
 class TimeMonthOverview extends Component {
@@ -16,6 +14,7 @@ class TimeMonthOverview extends Component {
         month: ((new Date()).getMonth() + 1),
         year: (new Date()).getFullYear(),
         timeBalance: 0.0,
+        username: this.props.username,
      }
 
      componentDidMount(){
@@ -25,8 +24,25 @@ class TimeMonthOverview extends Component {
     fetchEntries(){
         var envUrl = process.env.REACT_APP_TIME_URL;
         var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/time";
+
+        var firstQueryArgument = true;
         if (this.state.month !== undefined){
-            url = url + "?month=" + this.state.month
+            if(firstQueryArgument){
+                url = url + "?";
+                firstQueryArgument = false;
+            }else{
+                url = url + "&";
+            }
+            url = url + "month=" + this.state.month
+        }
+        if(this.state.username !== ""){
+            if(firstQueryArgument){
+                url = url + "?";
+                firstQueryArgument = false;
+            }else{
+                url = url + "&";
+            }
+            url= url + "username=" + this.state.username;
         }
 
         var hashedUsername = Cookies.get("Username");
@@ -49,7 +65,6 @@ class TimeMonthOverview extends Component {
             state.isLoaded = true;
             state.timeBalance = result.timeBalance;
             this.setState(state);
-            debugger;
         },
         (error) => {
           this.setState({
@@ -61,6 +76,10 @@ class TimeMonthOverview extends Component {
     }
 
     rowClicked = (navigation, dateString) => {
+        if(username !== ""){
+            return;
+        }
+
         let date = this.createDateFromDateString(dateString);
         var url = "/time-measurement/day";
         if (date !== undefined){
@@ -130,5 +149,17 @@ function DayRow(props){
             </tr>
     )
 }
+
+const withQueryParamsHOC = (Component) =>{
+    return (props) =>{
+        const [searchParams, setSearchParams] = useSearchParams();
+    var username = searchParams.get("username");
+    username = username !== undefined ? username : "";
+    username = username !== null ? username : "";
+
+    return <Component username={username}/>
+
+    }
+}
  
-export default TimeMonthOverview;
+export default withQueryParamsHOC(TimeMonthOverview);

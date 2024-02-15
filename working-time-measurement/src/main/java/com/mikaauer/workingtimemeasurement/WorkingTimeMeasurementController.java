@@ -19,10 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -36,9 +33,11 @@ public class WorkingTimeMeasurementController {
     @GetMapping()
     public ResponseEntity<WorkDayResponse> handleMonthOverviewRequest(@RequestParam(value = "month") Optional<String> month,
                                                                       @RequestParam(value = "year") Optional<String> year,
+                                                                      @RequestParam(value = "username") Optional<String> username,
                                                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
         try {
-            if ((new Validator()).validate(authorization)) {
+            if ((username.isPresent() && new Validator().validate(authorization, true)) ||
+                    (username.isEmpty() && (new Validator()).validate(authorization, false))) {
                 LocalDate now = LocalDate.now();
 
                 int localMonth = now.getMonthValue();
@@ -52,7 +51,7 @@ public class WorkingTimeMeasurementController {
                     localYear = Integer.parseInt(year.get());
                 }
 
-                List<WorkDay> workDays = databaseConnector.getWorkdays(localMonth, localYear, getUsername(authorization));
+                List<WorkDay> workDays = databaseConnector.getWorkdays(localMonth, localYear, username.orElse(getUsername(authorization)));
 
                 workDays.sort((WorkDay i1, WorkDay i2) -> Integer.compare(i1.getDay(), i2.getDay()));
 
@@ -62,10 +61,10 @@ public class WorkingTimeMeasurementController {
 
                 Date end;
 
-                if(now.getMonthValue() == localMonth && now.getYear() == localYear){
+                if (now.getMonthValue() == localMonth && now.getYear() == localYear) {
                     calendar.set(localYear, localMonth, now.getDayOfMonth());
                     end = calendar.getTime();
-                }else {
+                } else {
                     calendar.set(localYear, localMonth, Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
                     end = calendar.getTime();
                 }
@@ -89,6 +88,7 @@ public class WorkingTimeMeasurementController {
         return ResponseEntity.status(401).build();
     }
 
+
     @GetMapping()
     @RequestMapping("/day")
     public ResponseEntity<WorkDay> handleDayOverviewRequest(@RequestParam(value = "day") Optional<Integer> day,
@@ -96,7 +96,7 @@ public class WorkingTimeMeasurementController {
                                                             @RequestParam(value = "year") Optional<Integer> year,
                                                             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
         try {
-            if ((new Validator().validate(authorization))) {
+            if ((new Validator().validate(authorization, false))) {
                 LocalDate now = LocalDate.now();
 
                 int localDay = now.getDayOfMonth();
@@ -135,7 +135,7 @@ public class WorkingTimeMeasurementController {
     @PostMapping(consumes = "application/json")
     public ResponseEntity<WorkDay> handleWorkDayPostRequest(@RequestBody WorkDayDTO body, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
         try {
-            if ((new Validator()).validate(authorization)) {
+            if ((new Validator()).validate(authorization, false)) {
                 WorkDay object = new WorkDay(body.getDate(), body.getStartingHour() + ":" + body.getStartingMinute(),
                         body.getEndHour() + ":" + body.getEndMinute(), Integer.parseInt(body.getBreakDuration()),
                         getUsername(authorization), body.getTasks(), body.getComment());

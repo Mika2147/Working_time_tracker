@@ -33,6 +33,10 @@ public class WtmAuthorizationServerRegisterController {
     public ResponseEntity<String> handleRegisterRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization, @RequestBody Credentials credentials) {
         if (TokenManager.getInstance().validate(authorization, true)) {
             Users user = new Users(null, credentials.getUsername(), credentials.getPassword(), credentials.isAdmin());
+            if(user.getName().equals("admin")){
+                return ResponseEntity.badRequest().build();
+            }
+
             userRepository.save(user);
             return ResponseEntity.ok().build();
         }

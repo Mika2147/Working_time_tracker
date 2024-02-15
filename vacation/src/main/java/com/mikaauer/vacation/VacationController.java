@@ -27,15 +27,17 @@ public class VacationController {
 
     @GetMapping
     public ResponseEntity<VacationResponse> handleVacationOverviewRequest(@RequestParam(value = "year") Optional<Integer> year,
-                                                                          @RequestHeader(HttpHeaders.AUTHORIZATION)String authorization){
-        try{
-            if(validator.validate(authorization)){
+                                                                          @RequestParam(value = "username") Optional<String> username,
+                                                                          @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        try {
+            if ((username.isPresent() && validator.validate(authorization, true)) ||
+                    (username.isEmpty() && validator.validate(authorization, false))) {
                 List<Vacation> vacations;
 
-                if(year.isPresent()){
-                    vacations = databaseConnector.getVacations(year.get(), getUsername(authorization));
-                }else {
-                    vacations = databaseConnector.getVacations(getUsername(authorization));
+                if (year.isPresent()) {
+                    vacations = databaseConnector.getVacations(year.get(), username.orElse(getUsername(authorization)));
+                } else {
+                    vacations = databaseConnector.getVacations(username.orElse(getUsername(authorization)));
                 }
 
                 sortVacations(vacations);
@@ -46,7 +48,7 @@ public class VacationController {
                 VacationResponse response = new VacationResponse(vacations, restVacationDays);
                 return ResponseEntity.ok(response);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -54,9 +56,9 @@ public class VacationController {
     }
 
     @GetMapping("/future")
-    public ResponseEntity<VacationResponse> handleFutureVacationOverviewRequest(@RequestHeader(HttpHeaders.AUTHORIZATION)String authorization){
-        try{
-            if(validator.validate(authorization)){
+    public ResponseEntity<VacationResponse> handleFutureVacationOverviewRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        try {
+            if (validator.validate(authorization, false)) {
                 List<Vacation> vacations = databaseConnector.getFutureVacations(getUsername(authorization));
 
                 int year = Calendar.getInstance().get(Calendar.YEAR);
@@ -69,7 +71,7 @@ public class VacationController {
                 VacationResponse response = new VacationResponse(vacations, restVacationDays);
                 return ResponseEntity.ok(response);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -78,16 +80,40 @@ public class VacationController {
 
     @PostMapping(consumes = "application/json")
     public ResponseEntity<Vacation> handleVacationPostRequest(@RequestBody VacationDTO body,
-                                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization){
+                                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
         try {
-            if ((new Validator()).validate(authorization)) {
+            if ((new Validator()).validate(authorization, false)) {
                 Vacation vacation = new Vacation(body.getStartingDate(), body.getEndDate(), getUsername(authorization));
-                if(databaseConnector.insertVacation(vacation)){
+                if (databaseConnector.insertVacation(vacation)) {
                     return ResponseEntity.ok(vacation);
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PutMapping("/accept")
+    public ResponseEntity<Vacation> handleVacationAcceptRequest(@RequestParam(value = "id") int id,
+                                                                @RequestParam(value = "username") String username,
+                                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        try{
+            if ((new Validator()).validate(authorization, true)) {
+                Optional<Vacation> vacation = databaseConnector.getVacation(id, username);
+                if (vacation.isPresent()){
+                    vacation.get().setAccepted(true);
+                    if(databaseConnector.insertVacation(vacation.get())){
+                        return ResponseEntity.ok(vacation.get());
+                    }
+                }
+                return ResponseEntity.badRequest().build();
+            }
+
+            return ResponseEntity.status(401).build();
+        }catch (Exception e){
+            System.out.println(e);
         }
 
         return ResponseEntity.badRequest().build();
@@ -107,7 +133,7 @@ public class VacationController {
         }
     }
 
-    private void sortVacations(List<Vacation> vacations){
+    private void sortVacations(List<Vacation> vacations) {
         vacations.sort(new Comparator<Vacation>() {
             @Override
             public int compare(Vacation o1, Vacation o2) {
@@ -119,16 +145,16 @@ public class VacationController {
         });
     }
 
-    private int calculateRestVacationDays(List<Vacation> sortedVacations, Optional<Integer> year){
+    private int calculateRestVacationDays(List<Vacation> sortedVacations, Optional<Integer> year) {
         //TODO: calculate with individual vacation days
         int restVacationDays = 30;
 
-        if(year.isEmpty()){
+        if (year.isEmpty()) {
             year = Optional.of(Calendar.getInstance().get(Calendar.YEAR));
         }
 
-        for(Vacation vacation: sortedVacations){
-            if(vacation.getStartingYear() > year.get()){
+        for (Vacation vacation : sortedVacations) {
+            if (vacation.getStartingYear() > year.get()) {
                 return restVacationDays;
             }
             restVacationDays = restVacationDays - Utils.getVacationDaysInYear(vacation, year.get());

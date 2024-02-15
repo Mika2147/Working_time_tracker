@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { Button, Stack } from 'react-bootstrap';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import Table from 'react-bootstrap/Table';
 import Cookies from 'js-cookie';
-import { md5 } from 'js-md5';
 import YearPagination from './YearPagination';
 
 class Vacation extends Component {
     state = { items: [], 
                 restVacationDays: 0,
                 year: (new Date()).getFullYear(),
+                username: this.props.username,
             } 
 
     rowClicked = (navigation, id) => {
@@ -24,6 +24,10 @@ class Vacation extends Component {
         var envUrl = process.env.REACT_APP_VACATION_URL;
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8081") + "/vacation?year=" + this.state.year;
+
+        if(this.state.username !== ""){
+            url = url + "&username=" + this.state.username;
+        }
 
         var hashedUsername = Cookies.get("Username");
         var token = Cookies.get("Token");
@@ -61,6 +65,35 @@ class Vacation extends Component {
         this.fetchEntries();
     }
 
+    acceptVacation = (username, id) => {
+        var envUrl = process.env.REACT_APP_VACATION_URL;
+
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8081") + "/vacation/accept?id=" + id + "&username=" + username;
+
+        var hashedUsername = Cookies.get("Username");
+        var token = Cookies.get("Token");
+
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': ("Basic " + hashedUsername + ":" + token)
+            },
+        };
+
+        fetch(url, requestOptions)
+        .then(res => res.json())
+        .then(
+        (result) => {
+            console.log(result);
+          this.fetchEntries();
+        },
+        (error) => {
+          console.log(error);
+        }
+      )
+    }
+
     render() { 
         return (<React.Fragment>
             <div className='main-container'>
@@ -78,7 +111,7 @@ class Vacation extends Component {
                         </tr>
                     </thead>
                     <tbody> 
-                    {this.state.items.map(item => <VacationRow clicked={this.rowClicked} startingDate={item.startingDate} endDate={item.endDate} vacationDays={item.vacationDays} accepted={item.accepted}/>)}
+                    {this.state.items.map(item => <VacationRow clicked={this.rowClicked} id={item.id} startingDate={item.startingDate} endDate={item.endDate} vacationDays={item.vacationDays} accepted={item.accepted} username={this.state.username} acceptVacation={this.acceptVacation}/>)}
                     </tbody>
                 </Table>
                 <div>
@@ -98,9 +131,21 @@ function VacationRow(props){
             <td>{props.startingDate}</td>
             <td>{props.endDate}</td>
             <td>{props.vacationDays}</td>
-            <td>{props.accepted ? "Yes" : "No"}</td>
+            <td>{props.accepted ? "Yes" : "No"}{(props.username !== "" && !props.accepted) ? <Button variant="primary" onClick={(() => props.acceptVacation(props.username, props.id))}>Accept</Button> : <div></div>}</td>
             </tr>
     )
 }
+
+const withQueryParamsHOC = (Component) =>{
+    return (props) =>{
+        const [searchParams, setSearchParams] = useSearchParams();
+    var username = searchParams.get("username");
+    username = username !== undefined ? username : "";
+    username = username !== null ? username : "";
+
+    return <Component username={username}/>
+
+    }
+}
  
-export default Vacation;
+export default withQueryParamsHOC(Vacation);

@@ -60,7 +60,8 @@ public class VacationDatabaseConnector {
                 Updates.set(DatabaseConstants.KEY_END_DAY, vacation.getEndDay()),
                 Updates.set(DatabaseConstants.KEY_END_MONTH, vacation.getEndMonth()),
                 Updates.set(DatabaseConstants.KEY_END_YEAR, vacation.getEndYear()),
-                Updates.set(DatabaseConstants.KEY_USERNAME, vacation.getUsername())
+                Updates.set(DatabaseConstants.KEY_USERNAME, vacation.getUsername()),
+                Updates.set(DatabaseConstants.KEY_ACCEPTED, vacation.isAccepted())
         );
 
         UpdateOptions options = new UpdateOptions().upsert(true);
@@ -201,11 +202,9 @@ public class VacationDatabaseConnector {
         int documentEndYear = document.getInteger(DatabaseConstants.KEY_END_YEAR);
         String documentUsername = document.getString(DatabaseConstants.KEY_USERNAME);
         int documentId = document.getInteger(DatabaseConstants.KEY_ID);
-        //boolean documentAccepted = document.getBoolean(DatabaseConstants.KEY_ACCEPTED);
+        boolean documentAccepted = document.getBoolean(DatabaseConstants.KEY_ACCEPTED);
 
-        Vacation vacation = new Vacation(documentId,documentStartDay, documentStartMonth, documentStartYear, documentEndDay, documentEndMonth, documentEndYear, documentUsername, false);
+        Vacation vacation = new Vacation(documentId,documentStartDay, documentStartMonth, documentStartYear, documentEndDay, documentEndMonth, documentEndYear, documentUsername, documentAccepted);
         return vacation;
     }
-
-
 }

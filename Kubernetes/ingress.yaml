@@ -31,7 +31,7 @@ spec:
  rules:
  - http:
      paths:
-     - path: /time(/|$)(.*)
+     - path: /timeservice(/|$)(.*)
        pathType: Prefix
        backend:
          service:
@@ -51,7 +51,7 @@ spec:
  rules:
  - http:
      paths:
-     - path: /authorization(/|$)(.*)
+     - path: /authorizationservice(/|$)(.*)
        pathType: Prefix
        backend:
          service:
@@ -71,7 +71,7 @@ spec:
  rules:
  - http:
      paths:
-     - path: /vacation(/|$)(.*)
+     - path: /vacationservice(/|$)(.*)
        pathType: Prefix
        backend:
          service:

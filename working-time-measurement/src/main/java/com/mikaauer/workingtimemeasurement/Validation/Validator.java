@@ -7,18 +7,12 @@ import java.net.URL;
 
 public class Validator {
 
-    private boolean needsAdminRights = false;
-
-    public Validator(boolean needsAdminRights) {
-        this.needsAdminRights = needsAdminRights;
-    }
-
     public Validator() {
     }
 
-    public boolean validate(String authorization){
+    public boolean validate(String authorization, boolean needsAdminRights){
         try{
-            URL url = new URL((Constants.AUTHORIZATION_SERVER_VALIDATION_ENDPOINT_URL + "?needsadminrights=false"));
+            URL url = new URL((Constants.AUTHORIZATION_SERVER_VALIDATION_ENDPOINT_URL + "?needsadminrights=" + needsAdminRights));
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestProperty("Authorization", authorization);
             con.setConnectTimeout(5000);
