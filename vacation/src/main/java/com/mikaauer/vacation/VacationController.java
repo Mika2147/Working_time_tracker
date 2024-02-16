@@ -27,6 +27,7 @@ public class VacationController {
 
     @GetMapping
     public ResponseEntity<VacationResponse> handleVacationOverviewRequest(@RequestParam(value = "year") Optional<Integer> year,
+                                                                          @RequestParam(value = "month") Optional<Integer> month,
                                                                           @RequestParam(value = "username") Optional<String> username,
                                                                           @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
         try {
@@ -34,15 +35,24 @@ public class VacationController {
                     (username.isEmpty() && validator.validate(authorization, false))) {
                 List<Vacation> vacations;
 
+                int restVacationDays = 0;
+
                 if (year.isPresent()) {
-                    vacations = databaseConnector.getVacations(year.get(), username.orElse(getUsername(authorization)));
+                    List<Vacation> yearVacation = databaseConnector.getVacations(year.get(), username.orElse(getUsername(authorization)));
+                    sortVacations(yearVacation);
+
+                    if (month.isPresent()) {
+                        vacations = databaseConnector.getVacations(year.get(), month.get(), username.orElse(getUsername(authorization)));
+                        sortVacations(vacations);
+                    }else{
+                        vacations = yearVacation;
+                    }
+                    restVacationDays = calculateRestVacationDays(yearVacation, year);
                 } else {
                     vacations = databaseConnector.getVacations(username.orElse(getUsername(authorization)));
+                    sortVacations(vacations);
+                    restVacationDays = calculateRestVacationDays(vacations, year);
                 }
-
-                sortVacations(vacations);
-
-                int restVacationDays = calculateRestVacationDays(vacations, year);
 
                 // TODO: Replace restVacationDays with computed value
                 VacationResponse response = new VacationResponse(vacations, restVacationDays);

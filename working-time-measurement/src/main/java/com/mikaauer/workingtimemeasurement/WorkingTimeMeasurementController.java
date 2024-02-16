@@ -1,7 +1,11 @@
 package com.mikaauer.workingtimemeasurement;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mikaauer.workingtimemeasurement.Database.TimeMeasurementDatabaseConnector;
+import com.mikaauer.workingtimemeasurement.Export.DownloadFile;
+import com.mikaauer.workingtimemeasurement.Export.DownloadManager;
 import com.mikaauer.workingtimemeasurement.Export.Excel.ExcelExporter;
+import com.mikaauer.workingtimemeasurement.Vacation.VacationResponse;
 import com.mikaauer.workingtimemeasurement.Validation.Validator;
 import com.mikaauer.workingtimemeasurement.WorkDay.WorkDay;
 import com.mikaauer.workingtimemeasurement.WorkDay.WorkDayDTO;
@@ -18,6 +22,10 @@ import org.springframework.web.context.annotation.SessionScope;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -150,46 +158,86 @@ public class WorkingTimeMeasurementController {
     }
 
     @GetMapping()
-    @RequestMapping("/export")
-    public ResponseEntity<Resource> handleOverviewExportDownload(@RequestParam(value = "month") Optional<Integer> month,
-                                                                 @RequestParam(value = "year") Optional<Integer> year,
-                                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+    @RequestMapping("/export/prepare")
+    public ResponseEntity<String> handleOverviewExportPrepareDownload(@RequestParam(value = "month") Optional<Integer> month,
+                                                                    @RequestParam(value = "year") Optional<Integer> year,
+                                                                    @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
         try {
-            LocalDate now = LocalDate.now();
+            if ((new Validator()).validate(authorization, false)) {
 
-            int localMonth = now.getMonthValue();
-            int localYear = now.getYear();
+                LocalDate now = LocalDate.now();
 
-            if (month.isPresent()) {
-                localMonth = month.get();
+                int localMonth = now.getMonthValue();
+                int localYear = now.getYear();
+
+                if (month.isPresent()) {
+                    localMonth = month.get();
+                }
+
+                if (year.isPresent()) {
+                    localYear = year.get();
+                }
+
+                List<WorkDay> workdays = databaseConnector.getWorkdays(localMonth, localYear, getUsername(authorization));
+                workdays.sort((WorkDay i1, WorkDay i2) -> Integer.compare(i1.getDay(), i2.getDay()));
+
+
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(Constants.VACATION_SERVER_URL + "/vacation?month=" + localMonth + "&year=" + localYear ))
+                        .header(HttpHeaders.AUTHORIZATION, authorization)
+                        .build();
+
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+                String responseString = response.body();
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                VacationResponse vacationResponse = objectMapper.readValue(responseString, VacationResponse.class);
+
+                ExcelExporter exporter = new ExcelExporter();
+                String filePath = exporter.writeTimeFile(workdays, vacationResponse.getItems(), localMonth, localYear);
+
+                UUID token = DownloadManager.getInstance().insertFile(new DownloadFile(filePath, Constants.EXCEL_FILE_MEDIA_TYPE));
+                System.out.println("Token: " + token.toString());
+                return ResponseEntity.ok(token.toString());
+            }else {
+                return ResponseEntity.status(401).build();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-            if (year.isPresent()) {
-                localYear = year.get();
-            }
+        return ResponseEntity.badRequest().build();
 
-            List<WorkDay> workdays = databaseConnector.getWorkdays(localMonth, localYear, getUsername(authorization));
-            workdays.sort((WorkDay i1, WorkDay i2) -> Integer.compare(i1.getDay(), i2.getDay()));
+    }
 
-            ExcelExporter exporter = new ExcelExporter();
-            String filePath = exporter.writeTimeFile(workdays);
+    @GetMapping()
+    @RequestMapping("/export/{token}")
+    public ResponseEntity<Resource> handleOverviewExportDownload(@PathVariable UUID token) {
+        try {
+
+            Optional<DownloadFile> downloadFile = DownloadManager.getInstance().getFile(token);
 
             try {
-                File file = new File(filePath);
-                InputStreamResource resource = new InputStreamResource(new FileInputStream(filePath));
-                return ResponseEntity
-                        .ok()
-                        .contentLength(file.length())
-                        .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                        .body(resource);
+                if (downloadFile.isPresent()) {
+                    File file = new File(downloadFile.get().getFilepath());
+                    InputStreamResource resource = new InputStreamResource(new FileInputStream(downloadFile.get().getFilepath()));
+                    return ResponseEntity
+                            .ok()
+                            .contentLength(file.length())
+                            .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                            .body(resource);
+                }
+
             } catch (FileNotFoundException e) {
                 System.err.println(e);
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            System.err.println(e);
         }
-
+        return ResponseEntity.badRequest().build();
     }
 
     private String getUsername(String authorization) throws IllegalAccessException {

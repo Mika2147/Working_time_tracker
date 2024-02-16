@@ -37,4 +37,6 @@ spec:
               value: http://authorization.working-time-measurement.svc.cluster.local:8083
             - name: MONGO_DATABASE_URL
               value: mongodb://user:password@mongodb-time-svc.working-time-measurement.svc.cluster.local:27017
+            - name: VACATION_SERVER_PATH
+              value: http://vacation-backend.working-time-measurement.svc.cluster.local:8081
 ---

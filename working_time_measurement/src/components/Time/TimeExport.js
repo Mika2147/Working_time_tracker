@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { Button, Stack } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import CheckLoginWrapper from '../CheckLoginWrapper'
+import Cookies from 'js-cookie';
 
 class TimeExport extends Component {
     state = { 
         month: 1,
         year: 1971,
-        link: "http://localhost:8080/time/export",
+        token: "",
      }
 
      months = {
@@ -27,6 +27,41 @@ class TimeExport extends Component {
      }
 
      years = [0]
+
+     prepareDwonload = () => {
+        var envUrl = process.env.REACT_APP_TIME_URL;
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/time/export/prepare";
+        let state = this.state;
+
+        var hashedUsername = Cookies.get("Username");
+        var token = Cookies.get("Token");
+
+        
+        url = url + "?month=" + this.state.month;
+        url = url + "&year=" + this.state.year;
+        
+        const requestOptions = {
+            method: 'GET',
+            headers: { 
+                'Authorization': ("Basic " + hashedUsername + ":" + token),
+            },
+        };
+
+        fetch(url, requestOptions)
+        .then(res => res.text())
+        .then(
+        (result) => {
+            debugger;
+          let state = this.state;
+          state.token = result;
+          this.setState(state);
+
+        },
+        (error) => {
+         console.log("Export preparation failed");
+        }
+      )
+    }
      
 
      setMonth = (month) => {
@@ -60,13 +95,10 @@ class TimeExport extends Component {
     }
 
     createLink = (month, year) => {
+        debugger;
         var envUrl = process.env.REACT_APP_TIME_URL;
-        var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/export";
-        if (month !== undefined && year !== undefined){
-            url = url + "?month=" + month;
-            url = url + "&year=" + year;
-        }
-
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/time/export/" + this.state.token;
+        
         return url;
     }
 
@@ -87,9 +119,11 @@ class TimeExport extends Component {
                             {this.years.map((year) => <option value={year}>{year}</option>)}
                         </Form.Select>
                     </InputGroup>
-                    <a href={this.state.link} download={this.state.month + "_" + this.state.year + ".xlsx"}>
+                    <Button onClick={() => this.prepareDwonload()} >Prepare Download</Button>
+
+                    {this.state.token !=="" ? <a href={this.createLink()} download={this.state.month + "_" + this.state.year + ".xlsx"}>
                         <Button>Download</Button>
-                    </a>
+                    </a> : <div></div>}
                 </Stack>
             </div>
         </React.Fragment>);

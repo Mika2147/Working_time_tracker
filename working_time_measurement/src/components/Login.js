@@ -22,7 +22,6 @@ function Login(props){
         const requestOptions = {
             method: 'GET',
             headers: { 
-                'Content-Type': 'application/json',
                 'Authorization': ("Basic " + hashedUsername + ":" + hashedPassword),
             },
         };

@@ -114,6 +114,47 @@ public class VacationDatabaseConnector {
         return vacations;
     }
 
+    public List<Vacation> getVacations(int year, int month, String username){
+        MongoDatabase database = mongoClient.getDatabase(DatabaseConstants.TIME_DATABASE_NAME);
+        MongoCollection<Document> collection = database.getCollection(DatabaseConstants.VACATION_COLLECTION_NAME);
+
+        Document searchQuery = new Document();
+        searchQuery.put(DatabaseConstants.KEY_STARTING_YEAR, year);
+        searchQuery.put(DatabaseConstants.KEY_STARTING_MONTH, month);
+        searchQuery.put(DatabaseConstants.KEY_USERNAME, username);
+        FindIterable<Document> cursor = collection.find(searchQuery);
+
+        List<Vacation> vacations = new ArrayList<>();
+
+        try (final MongoCursor<Document> cursorIterator = cursor.cursor()) {
+            while (cursorIterator.hasNext()) {
+                Document document = cursorIterator.next();
+
+                Vacation vacation = extractVacationFromDocument(document);
+                vacations.add(vacation);
+            }
+        }
+
+        searchQuery = new Document();
+        searchQuery.put(DatabaseConstants.KEY_END_YEAR, year);
+        searchQuery.put(DatabaseConstants.KEY_END_MONTH, month);
+        searchQuery.put(DatabaseConstants.KEY_USERNAME, username);
+        cursor = collection.find(searchQuery);
+
+        try (final MongoCursor<Document> cursorIterator = cursor.cursor()) {
+            while (cursorIterator.hasNext()) {
+                Document document = cursorIterator.next();
+
+                Vacation vacation = extractVacationFromDocument(document);
+                vacations.add(vacation);
+            }
+        }
+
+        vacations = vacations.stream().distinct().collect(Collectors.toList());
+
+        return vacations;
+    }
+
     public List<Vacation> getVacations(String username){
         MongoDatabase database = mongoClient.getDatabase(DatabaseConstants.TIME_DATABASE_NAME);
         MongoCollection<Document> collection = database.getCollection(DatabaseConstants.VACATION_COLLECTION_NAME);

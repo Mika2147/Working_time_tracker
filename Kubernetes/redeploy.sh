@@ -24,7 +24,7 @@ docker build -t authorization . --no-cache
 cd ..
 
 cd working_time_measurement
-docker build -t wtm-frontend . --no-cache
+docker build -t wtm-frontend . 
 cd ..
 
 cd Kubernetes
