@@ -119,10 +119,10 @@ class TimeExport extends Component {
                             {this.years.map((year) => <option value={year}>{year}</option>)}
                         </Form.Select>
                     </InputGroup>
-                    <Button onClick={() => this.prepareDwonload()} >Prepare Download</Button>
+                    <Button onClick={() => this.prepareDwonload()}>Prepare Download</Button>
 
-                    {this.state.token !=="" ? <a href={this.createLink()} download={this.state.month + "_" + this.state.year + ".xlsx"}>
-                        <Button>Download</Button>
+                    {this.state.token !=="" ? <a href={this.createLink()} download={this.state.month + "_" + this.state.year + ".xlsx"} className='full-width'>
+                        <Button className='full-width'>Download</Button>
                     </a> : <div></div>}
                 </Stack>
             </div>

@@ -13,7 +13,7 @@ public class DownloadManager {
     private Timer timer;
 
     private DownloadManager() {
-        this.fileMap = fileMap;
+        this.fileMap = new HashMap<>();
         timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override

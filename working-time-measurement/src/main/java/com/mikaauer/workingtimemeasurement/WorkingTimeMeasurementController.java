@@ -189,7 +189,6 @@ public class WorkingTimeMeasurementController {
                         .build();
 
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
                 String responseString = response.body();
 
                 ObjectMapper objectMapper = new ObjectMapper();

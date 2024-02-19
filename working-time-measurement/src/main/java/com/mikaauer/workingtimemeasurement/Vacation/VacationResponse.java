@@ -1,7 +1,10 @@
 package com.mikaauer.workingtimemeasurement.Vacation;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import java.util.List;
 
+@JsonDeserialize(using = VacationResponseDeserializer.class)
 public class VacationResponse {
     private List<Vacation> items;
 
