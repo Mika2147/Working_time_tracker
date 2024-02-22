@@ -29,6 +29,7 @@ spec:
         app: time-backend
     spec:
       containers:
+        #- image: docker.io/mika2147/time-backend
         - image: time-backend
           name: time-backend
           imagePullPolicy: Never

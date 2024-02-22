@@ -15,6 +15,7 @@ spec:
     spec:
       containers:
         - name: wtm-frontend
+          #image: docker.io/mika2147/wtm-frontend
           image: wtm-frontend
           imagePullPolicy: Never
           ports:
@@ -22,10 +23,13 @@ spec:
           env: 
             - name: REACT_APP_AUTHORIZATION_URL
               value: http://localhost/authorizationservice
+              #value: http://4.182.3.55/authorizationservice
             - name: REACT_APP_TIME_URL
               value: http://localhost/timeservice
+              #value: http://4.182.3.55/timeservice
             - name: REACT_APP_VACATION_URL
               value: http://localhost/vacationservice
+              #value: http://4.182.3.55/vacationservice
 ---
 apiVersion: v1
 kind: Service

@@ -30,6 +30,7 @@ spec:
     spec:
       containers:
         - image: vacation-backend
+        #- image: docker.io/mika2147/vacation-backend
           name: vacation-backend
           imagePullPolicy: Never
           env:
