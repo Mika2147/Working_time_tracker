@@ -1,0 +1,15 @@
+#FROM gradle:jdk17-graal
+#COPY . /usr/src/wtm-authorization-server
+#WORKDIR /usr/src/wtm-authorization-server
+
+#EXPOSE 8083
+#ENTRYPOINT ["gradle", "nativeRun"]
+
+FROM gradle:jdk17-graal
+COPY . /usr/src/wtm-authorization-server
+WORKDIR /usr/src/wtm-authorization-server
+RUN ["./gradlew", "nativeCompile"]
+#COPY /build/native/nativeCompile/wtm-authorization-server /app
+
+EXPOSE 8083
+ENTRYPOINT ["/usr/src/wtm-authorization-server/build/native/nativeCompile/wtm-authorization-server"]

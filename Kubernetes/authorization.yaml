@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - image: authorization
-        #- image: docker.io/mika2147/authorization
+        #- image: docker.io/mika2147/authorization:native
           name: authorization
           imagePullPolicy: Never
           env:
