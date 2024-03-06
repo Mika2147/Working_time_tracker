@@ -1,0 +1,7 @@
+FROM gradle:jdk17-graal
+COPY . /usr/src/vacation
+WORKDIR /usr/src/vacation
+RUN ["./gradlew", "nativeCompile"]
+
+EXPOSE 8081
+ENTRYPOINT ["/usr/src/vacation/build/native/nativeCompile/vacation"]

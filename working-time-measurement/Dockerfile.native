@@ -1,0 +1,7 @@
+FROM gradle:jdk17-graal
+COPY . /usr/src/working-time-measurement
+WORKDIR /usr/src/working-time-measurement
+RUN ["./gradlew", "nativeCompile"]
+
+EXPOSE 8080
+ENTRYPOINT ["/usr/src/working-time-measurement/build/native/nativeCompile/working-time-measurement"]
