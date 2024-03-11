@@ -22,6 +22,19 @@ dependencies {
 	implementation 'org.mongodb:mongodb-driver-sync:4.11.1'
 	implementation group: 'javax.inject', name: 'javax.inject', version: '1'
 	implementation group: 'org.dhatim', name: 'fastexcel', version: '0.15.3'
+	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
+	implementation 'org.json:json:20230227'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
+	implementation 'javax.mail:mail:1.4.7'
+	implementation 'javax.servlet:javax.servlet-api:4.0.1'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'com.azure.spring:spring-cloud-azure-starter-active-directory:5.0.0'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	implementation 'org.springframework.security:spring-security-oauth2-authorization-server'
+	implementation 'com.microsoft.azure:azure-active-directory-spring-boot-starter:3.0.0'
 }
 
 tasks.named('test') {
