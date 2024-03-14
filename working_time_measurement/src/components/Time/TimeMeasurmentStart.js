@@ -1,58 +1,39 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import TimeMeasurementCard from './TimeMeasurementCard';
-import Cookies from 'js-cookie';
-import { md5 } from 'js-md5';
+import { useMsal } from '@azure/msal-react';
+import { msalConfig, appRoles } from '../../Config';
 
-class TimeMeasurementStart extends Component {
-    state = { isAdmin: false } 
+function TimeMeasurementStart() {
+  const [isAdmin, setIsAdmin] = useState(false);
+  const {instance} = useMsal();
 
-    fetchIsAdmin(){
-      var envUrl = process.env.REACT_APP_AUTHORIZATION_URL;
-
-      var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "/register";
-        
-        var hashedUsername = Cookies.get("Username");
-        var token = Cookies.get("Token");
-
-        const requestOptions = {
-            method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': ("Basic " + hashedUsername + ":" + token)
-            },
-        };
-
-        fetch(url, requestOptions)
-        .then(res => res.json())
-        .then(
-        (result) => {
-          this.setState({
-            isAdmin: result,
-          });
-        },
-        (error) => {
-          console.log(error);
+  useEffect(() => {
+    var isAdmin = false;
+    const currentAccount = instance.getActiveAccount();
+      if (currentAccount){
+        if(currentAccount.tenantId = msalConfig.auth.tenantId){
+          const idTokenClaims = currentAccount.idTokenClaims;
+          if (idTokenClaims && idTokenClaims.aud == msalConfig.auth.clientId && idTokenClaims["roles"]){
+            debugger;
+            if (idTokenClaims["roles"].includes(appRoles.Admin)){
+              isAdmin = true;;
+            }
+          }
         }
-      )
-    }
+      }
+      setIsAdmin(isAdmin);
+  });
 
-    componentDidMount(){
-        this.fetchIsAdmin();
-    }
-
-    render() { 
-        return (<React.Fragment>
-                    <div className="main-container">
-                        <div className="card-container">
-                            <TimeMeasurementCard title="Today" text="Enter the time you worked today" buttonTitle="Go" link="/time-measurement/day"/>
-                            <TimeMeasurementCard title="This Month" text="Look at the time your worked this month" buttonTitle="Go" link="/time-measurement/overview"/>
-                            <TimeMeasurementCard title="Export" text="Export current Month" buttonTitle="Go" link="/time-measurement/export"/>
-                            {this.state.isAdmin && <TimeMeasurementCard title="Users" text="Manage users" buttonTitle="Go" link="/users"/>}
-                        </div>
-                    </div>
-                </React.Fragment>
-        )
-    }
+  return ( <React.Fragment>
+    <div className="main-container">
+        <div className="card-container">
+            <TimeMeasurementCard title="Today" text="Enter the time you worked today" buttonTitle="Go" link="/time-measurement/day"/>
+            <TimeMeasurementCard title="This Month" text="Look at the time your worked this month" buttonTitle="Go" link="/time-measurement/overview"/>
+            <TimeMeasurementCard title="Export" text="Export current Month" buttonTitle="Go" link="/time-measurement/export"/>
+            {isAdmin && <TimeMeasurementCard title="Users" text="Manage users" buttonTitle="Go" link="/users"/>}
+        </div>
+    </div>
+    </React.Fragment> );
 }
- 
+
 export default TimeMeasurementStart;

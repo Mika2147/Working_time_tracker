@@ -76,10 +76,6 @@ class TimeMonthOverview extends Component {
     }
 
     rowClicked = (navigation, dateString) => {
-        if(username !== ""){
-            return;
-        }
-
         let date = this.createDateFromDateString(dateString);
         var url = "/time-measurement/day";
         if (date !== undefined){

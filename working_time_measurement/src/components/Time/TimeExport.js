@@ -51,7 +51,6 @@ class TimeExport extends Component {
         .then(res => res.text())
         .then(
         (result) => {
-            debugger;
           let state = this.state;
           state.token = result;
           this.setState(state);
@@ -95,7 +94,6 @@ class TimeExport extends Component {
     }
 
     createLink = (month, year) => {
-        debugger;
         var envUrl = process.env.REACT_APP_TIME_URL;
         var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/time/export/" + this.state.token;
         
