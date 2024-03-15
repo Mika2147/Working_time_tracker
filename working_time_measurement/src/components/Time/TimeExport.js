@@ -3,6 +3,8 @@ import { Button, Stack } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Cookies from 'js-cookie';
+import { Token } from '../../Token';
+
 
 class TimeExport extends Component {
     state = { 
@@ -28,13 +30,13 @@ class TimeExport extends Component {
 
      years = [0]
 
-     prepareDwonload = () => {
+     prepareDwonload = async () => {
         var envUrl = process.env.REACT_APP_TIME_URL;
         var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/time/export/prepare";
         let state = this.state;
 
         var hashedUsername = Cookies.get("Username");
-        var token = Cookies.get("Token");
+        var token = await Token.getToken();
 
         
         url = url + "?month=" + this.state.month;

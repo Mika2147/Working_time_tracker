@@ -5,6 +5,8 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { md5 } from 'js-md5';
+import { Token } from '../../Token';
+
 
 class VacationForm extends Component {
     state = {
@@ -16,7 +18,7 @@ class VacationForm extends Component {
         }
     }
 
-    submitEntry = (navigation) => {
+    submitEntry = async (navigation) => {
         if(this.state.error.startingDate){
             return;
         }
@@ -29,7 +31,8 @@ class VacationForm extends Component {
         var url = (envUrl != undefined ? envUrl : "http://localhost:8081") + "/vacation";
 
         var hashedUsername = Cookies.get("Username");
-        var token = Cookies.get("Token");
+        var token = await Token.getToken();
+
 
         const requestOptions = {
             method: 'POST',

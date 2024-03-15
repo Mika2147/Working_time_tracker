@@ -10,7 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
-
 import java.util.*;
 
 @RestController
@@ -38,23 +37,22 @@ public class VacationController {
                 int restVacationDays = 0;
 
                 if (year.isPresent()) {
-                    List<Vacation> yearVacation = databaseConnector.getVacations(year.get(), username.orElse(getUsername(authorization)));
+                    List<Vacation> yearVacation = databaseConnector.getVacations(year.get(), username.orElse(validator.getUsername(authorization)));
                     sortVacations(yearVacation);
 
                     if (month.isPresent()) {
-                        vacations = databaseConnector.getVacations(year.get(), month.get(), username.orElse(getUsername(authorization)));
+                        vacations = databaseConnector.getVacations(year.get(), month.get(), username.orElse(validator.getUsername(authorization)));
                         sortVacations(vacations);
                     }else{
                         vacations = yearVacation;
                     }
                     restVacationDays = calculateRestVacationDays(yearVacation, year);
                 } else {
-                    vacations = databaseConnector.getVacations(username.orElse(getUsername(authorization)));
+                    vacations = databaseConnector.getVacations(username.orElse(validator.getUsername(authorization)));
                     sortVacations(vacations);
                     restVacationDays = calculateRestVacationDays(vacations, year);
                 }
 
-                // TODO: Replace restVacationDays with computed value
                 VacationResponse response = new VacationResponse(vacations, restVacationDays);
                 return ResponseEntity.ok(response);
             }
@@ -69,10 +67,10 @@ public class VacationController {
     public ResponseEntity<VacationResponse> handleFutureVacationOverviewRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
         try {
             if (validator.validate(authorization, false)) {
-                List<Vacation> vacations = databaseConnector.getFutureVacations(getUsername(authorization));
+                List<Vacation> vacations = databaseConnector.getFutureVacations(validator.getUsername(authorization));
 
                 int year = Calendar.getInstance().get(Calendar.YEAR);
-                List<Vacation> vacationsInYear = databaseConnector.getVacations(year, getUsername(authorization));
+                List<Vacation> vacationsInYear = databaseConnector.getVacations(year, validator.getUsername(authorization));
 
                 sortVacations(vacations);
 
@@ -93,7 +91,7 @@ public class VacationController {
                                                               @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
         try {
             if ((new Validator()).validate(authorization, false)) {
-                Vacation vacation = new Vacation(body.getStartingDate(), body.getEndDate(), getUsername(authorization));
+                Vacation vacation = new Vacation(body.getStartingDate(), body.getEndDate(), validator.getUsername(authorization));
                 if (databaseConnector.insertVacation(vacation)) {
                     return ResponseEntity.ok(vacation);
                 }
@@ -127,20 +125,6 @@ public class VacationController {
         }
 
         return ResponseEntity.badRequest().build();
-    }
-
-
-    private String getUsername(String authorization) throws IllegalAccessException {
-        if (authorization.startsWith("Basic ")) {
-            String[] auth = authorization.split("Basic ")[1].split(":");
-            if (auth.length > 1) {
-                return auth[0];
-            } else {
-                throw new IllegalArgumentException("Authorization Header does not contain username");
-            }
-        } else {
-            throw new IllegalAccessException("Authorization Header is not valid");
-        }
     }
 
     private void sortVacations(List<Vacation> vacations) {

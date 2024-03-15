@@ -4,6 +4,8 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import Table from 'react-bootstrap/Table';
 import Cookies from 'js-cookie';
 import YearPagination from './YearPagination';
+import { Token } from '../../Token';
+
 
 class Vacation extends Component {
     state = { items: [], 
@@ -20,7 +22,7 @@ class Vacation extends Component {
         this.fetchEntries();
      }
 
-    fetchEntries(){
+    fetchEntries = async () => {
         var envUrl = process.env.REACT_APP_VACATION_URL;
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8081") + "/vacation?year=" + this.state.year;
@@ -30,7 +32,8 @@ class Vacation extends Component {
         }
 
         var hashedUsername = Cookies.get("Username");
-        var token = Cookies.get("Token");
+        var token = await Token.getToken();
+
 
         const requestOptions = {
             method: 'GET',
@@ -65,13 +68,14 @@ class Vacation extends Component {
         this.fetchEntries();
     }
 
-    acceptVacation = (username, id) => {
+    acceptVacation = async (username, id) => {
         var envUrl = process.env.REACT_APP_VACATION_URL;
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8081") + "/vacation/accept?id=" + id + "&username=" + username;
 
         var hashedUsername = Cookies.get("Username");
-        var token = Cookies.get("Token");
+        var token = await Token.getToken();
+
 
         const requestOptions = {
             method: 'PUT',

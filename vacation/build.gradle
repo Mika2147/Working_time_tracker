@@ -20,6 +20,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.mongodb:mongodb-driver-sync:4.11.1'
+	implementation 'com.auth0:jwks-rsa:0.22.1'
+	implementation 'com.auth0:java-jwt:4.4.0'
 }
 
 tasks.named('test') {

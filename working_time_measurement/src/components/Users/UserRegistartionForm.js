@@ -3,6 +3,8 @@ import { Button, CloseButton, Form, InputGroup, Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { md5 } from 'js-md5';
+import { Token } from '../../Token';
+
 
 class UserRegistrationForm extends Component {
     state = {
@@ -76,7 +78,7 @@ class UserRegistrationForm extends Component {
         navigation("/users");
     }
 
-    submitEntry = (navigation) => {
+    submitEntry = async (navigation) => {
         if(this.state.error.username){
             return;
         }
@@ -95,7 +97,7 @@ class UserRegistrationForm extends Component {
         var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "/register";
 
         var hashedUsername = Cookies.get("Username");
-        var token = Cookies.get("Token");
+        var token = await Token.getToken();
 
         const requestOptions = {
             method: 'POST',

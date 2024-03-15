@@ -3,6 +3,8 @@ import { Button, CloseButton, Form, InputGroup, Stack } from 'react-bootstrap';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { md5 } from 'js-md5';
+import { Token } from '../../Token';
+
 
 class UserEditForm extends Component {
     state = {
@@ -68,7 +70,7 @@ class UserEditForm extends Component {
         navigation("/users");
     }
 
-    submitEntry = (navigation) => {
+    submitEntry = async (navigation) => {
         if(this.state.error.password){
             return;
         }
@@ -84,7 +86,7 @@ class UserEditForm extends Component {
         var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "admin/users/" + this.state.id;
 
         var hashedUsername = Cookies.get("Username");
-        var token = Cookies.get("Token");
+        var token = await Token.getToken();
 
         let password = this.state.password.trim().length > 0 ? md5(this.state.password) : "";
 

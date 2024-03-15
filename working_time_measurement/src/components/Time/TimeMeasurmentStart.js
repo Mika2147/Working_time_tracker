@@ -14,7 +14,6 @@ function TimeMeasurementStart() {
         if(currentAccount.tenantId = msalConfig.auth.tenantId){
           const idTokenClaims = currentAccount.idTokenClaims;
           if (idTokenClaims && idTokenClaims.aud == msalConfig.auth.clientId && idTokenClaims["roles"]){
-            debugger;
             if (idTokenClaims["roles"].includes(appRoles.Admin)){
               isAdmin = true;;
             }

@@ -59,7 +59,7 @@ public class WorkingTimeMeasurementController {
                     localYear = Integer.parseInt(year.get());
                 }
 
-                List<WorkDay> workDays = databaseConnector.getWorkdays(localMonth, localYear, username.orElse(getUsername(authorization)));
+                List<WorkDay> workDays = databaseConnector.getWorkdays(localMonth, localYear, username.orElse(new Validator().getUsername(authorization)));
 
                 workDays.sort((WorkDay i1, WorkDay i2) -> Integer.compare(i1.getDay(), i2.getDay()));
 
@@ -123,7 +123,7 @@ public class WorkingTimeMeasurementController {
                     localYear = year.get();
                 }
 
-                Optional<WorkDay> workday = databaseConnector.getWorkday(localDay, localMonth, localYear, getUsername(authorization));
+                Optional<WorkDay> workday = databaseConnector.getWorkday(localDay, localMonth, localYear, new Validator().getUsername(authorization));
 
                 if (workday.isPresent()) {
                     return ResponseEntity.ok(workday.get());
@@ -146,7 +146,7 @@ public class WorkingTimeMeasurementController {
             if ((new Validator()).validate(authorization, false)) {
                 WorkDay object = new WorkDay(body.getDate(), body.getStartingHour() + ":" + body.getStartingMinute(),
                         body.getEndHour() + ":" + body.getEndMinute(), Integer.parseInt(body.getBreakDuration()),
-                        getUsername(authorization), body.getTasks(), body.getComment());
+                        new Validator().getUsername(authorization), body.getTasks(), body.getComment());
                 databaseConnector.insertWorkday(object);
                 return ResponseEntity.ok(object);
             }
@@ -178,7 +178,7 @@ public class WorkingTimeMeasurementController {
                     localYear = year.get();
                 }
 
-                List<WorkDay> workdays = databaseConnector.getWorkdays(localMonth, localYear, getUsername(authorization));
+                List<WorkDay> workdays = databaseConnector.getWorkdays(localMonth, localYear, new Validator().getUsername(authorization));
                 workdays.sort((WorkDay i1, WorkDay i2) -> Integer.compare(i1.getDay(), i2.getDay()));
 
 
@@ -237,19 +237,5 @@ public class WorkingTimeMeasurementController {
             System.err.println(e);
         }
         return ResponseEntity.badRequest().build();
-    }
-
-    private String getUsername(String authorization) throws IllegalAccessException {
-        if (authorization.startsWith("Basic ")) {
-            String[] auth = authorization.split("Basic ")[1].split(":");
-            // TODO: Validate user here and create token
-            if (auth.length > 1) {
-                return auth[0];
-            } else {
-                throw new IllegalArgumentException("Authorization Header does not contain username");
-            }
-        } else {
-            throw new IllegalAccessException("Authorization Header is not valid");
-        }
     }
 }

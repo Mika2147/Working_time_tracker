@@ -3,19 +3,21 @@ import { md5 } from 'js-md5';
 import React, { Component } from 'react';
 import { Button, Stack, Table } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import { Token } from '../../Token';
+
 
 class UserManagement extends Component {
     state = { 
                 items: [], 
             }
 
-    fetchEntries(){
+    fetchEntries = async () =>{
         var envUrl = process.env.REACT_APP_AUTHORIZATION_URL;
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8083") +"/admin/users";
         
         var hashedUsername = Cookies.get("Username");
-        var token = Cookies.get("Token");
+        var token = await Token.getToken();
 
         const requestOptions = {
             method: 'GET',
@@ -43,13 +45,14 @@ class UserManagement extends Component {
         this.fetchEntries();
     }
 
-    deleteUser = (id) => {
+    deleteUser = async (id) => {
         var envUrl = process.env.REACT_APP_AUTHORIZATION_URL;
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "/admin/users/" + id;
         
         var hashedUsername = Cookies.get("Username");
-        var token = Cookies.get("Token");
+        var token = await Token.getToken();
+
 
         const requestOptions = {
             method: 'DELETE',
@@ -105,14 +108,12 @@ class UserManagement extends Component {
                     <Table striped bordered hover>
                         <thead>
                             <tr>
-                                <th>ID</th>
                                 <th>Username</th>
-                                <th>is Admin</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody> 
-                        {this.state.items.map(item => <UserRow id={item.id} username={item.name} isAdmin={item.admin} deleteUser={this.deleteUser} changeUser={this.changeUser} showTimeEntries={this.showTimeEntries} showVacationEntries={this.showVacationEntries}/>)}
+                        {this.state.items.map(item => <UserRow username={item.name} showTimeEntries={this.showTimeEntries} showVacationEntries={this.showVacationEntries}/>)}
                         </tbody>
                     </Table>
                 </Stack>
@@ -125,11 +126,8 @@ function UserRow(props){
     const navigation = useNavigate();
     return(
         <tr>
-            <td>{props.id}</td>
             <td>{props.username}</td>
-            <td>{props.isAdmin ? "Yes" : "No"}</td>
             <td>
-            {props.username !== "admin" ? <div><Button variant="primary" onClick={(() => props.changeUser(props.id, props.username, props.isAdmin, navigation))}>Edit</Button><Button variant="danger" onClick={() => props.deleteUser(props.id)}>Delete</Button></div> : <div></div>}
             <Button variant="primary" onClick={(() => props.showTimeEntries(props.username, navigation))}>Working Times</Button>
             <Button variant="primary" onClick={(() => props.showVacationEntries(props.username, navigation))}>Vacation</Button>
             </td>

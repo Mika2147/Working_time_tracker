@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { useNavigate, useSearchParams} from 'react-router-dom';
 import Cookies from 'js-cookie';
-import { md5 } from 'js-md5';
+import { Token } from '../../Token';
 
 class TimeEnteringForm extends Component {
     state = {
@@ -28,14 +28,14 @@ class TimeEnteringForm extends Component {
         }
     }
 
-    fetchEntry = () => {
+    fetchEntry = async () => {
         var envUrl = process.env.REACT_APP_TIME_URL;
         var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/time/day";
         let state = this.state;
         const date = this.createDateFromDateString(state.date);
 
         var hashedUsername = Cookies.get("Username");
-        var token = Cookies.get("Token");
+        var token = await Token.getToken();
 
         if (date !== undefined){
             url = url + "?day=" + date.getDate();
@@ -86,7 +86,7 @@ class TimeEnteringForm extends Component {
 
 
     
-    submitEntry = (navigation) => {
+    submitEntry = async (navigation) => {
         if(this.state.error.date){
             return;
         }
@@ -115,7 +115,8 @@ class TimeEnteringForm extends Component {
         var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/time";
 
         var hashedUsername = Cookies.get("Username");
-        var token = Cookies.get("Token");
+        var token = await Token.getToken();
+
 
         const requestOptions = {
             method: 'POST',
