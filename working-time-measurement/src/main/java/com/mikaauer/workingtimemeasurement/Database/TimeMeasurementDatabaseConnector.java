@@ -10,9 +10,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class TimeMeasurementDatabaseConnector {
@@ -116,5 +114,24 @@ public class TimeMeasurementDatabaseConnector {
         }
 
         return Optional.empty();
+    }
+
+    public List<String> getUsernames(){
+        MongoDatabase database = mongoClient.getDatabase(DatabaseConstants.TIME_DATABASE_NAME);
+        MongoCollection<Document> collection = database.getCollection(DatabaseConstants.WORKDAYS_COLLECTION_NAME);
+        FindIterable<Document> cursor = collection.find();
+
+        Set<String> users = new HashSet<>();
+
+        try (final MongoCursor<Document> cursorIterator = cursor.cursor()) {
+            if (cursorIterator.hasNext()) {
+                Document document = cursorIterator.next();
+                String documentUsername = document.getString(DatabaseConstants.KEY_USERNAME);
+
+                users.add(documentUsername);
+            }
+        }
+
+        return users.stream().toList();
     }
 }

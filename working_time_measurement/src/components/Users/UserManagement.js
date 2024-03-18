@@ -14,16 +14,15 @@ class UserManagement extends Component {
     fetchEntries = async () =>{
         var envUrl = process.env.REACT_APP_AUTHORIZATION_URL;
 
-        var url = (envUrl != undefined ? envUrl : "http://localhost:8083") +"/admin/users";
+        var url = (envUrl != undefined ? envUrl : "http://localhost:8080") +"/user";
         
-        var hashedUsername = Cookies.get("Username");
         var token = await Token.getToken();
 
         const requestOptions = {
             method: 'GET',
             headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': ("Basic " + hashedUsername + ":" + token)
+                'Authorization': token,
             },
         };
 
@@ -32,7 +31,7 @@ class UserManagement extends Component {
         .then(
         (result) => {
           this.setState({
-            items: result.items
+            items: result
           });
         },
         (error) => {
@@ -45,7 +44,7 @@ class UserManagement extends Component {
         this.fetchEntries();
     }
 
-    deleteUser = async (id) => {
+    /*deleteUser = async (id) => {
         var envUrl = process.env.REACT_APP_AUTHORIZATION_URL;
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "/admin/users/" + id;
@@ -74,14 +73,14 @@ class UserManagement extends Component {
       )
 
       this.fetchEntries();
-    }
+    }*/
 
-    changeUser = (id, name, isAdmin, navigation) => {
+    /*changeUser = (id, name, isAdmin, navigation) => {
         
         var url = "/users/edit?id=" + id + "&name=" + name + "&isAdmin=" + isAdmin;
 
         navigation(url);
-    }
+    }*/
 
     showTimeEntries = (name, navigation) => {
         
@@ -113,7 +112,7 @@ class UserManagement extends Component {
                             </tr>
                         </thead>
                         <tbody> 
-                        {this.state.items.map(item => <UserRow username={item.name} showTimeEntries={this.showTimeEntries} showVacationEntries={this.showVacationEntries}/>)}
+                        {this.state.items.map(item => <UserRow username={item} showTimeEntries={this.showTimeEntries} showVacationEntries={this.showVacationEntries}/>)}
                         </tbody>
                     </Table>
                 </Stack>
