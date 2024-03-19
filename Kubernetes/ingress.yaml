@@ -7,17 +7,19 @@ metadata:
  annotations:
    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
- ingressClassName: nginx
- rules:
- - http:
-     paths:
-     - path: /
-       pathType: Prefix
-       backend:
-         service:
-           name: wtm-frontend
-           port:
-             number: 3000
+  ingressClassName: nginx
+  tls:
+    - secretName: ingress-tls
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: wtm-frontend
+            port:
+              number: 3000
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -27,17 +29,19 @@ metadata:
  annotations:
    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
- ingressClassName: nginx
- rules:
- - http:
-     paths:
-     - path: /timeservice(/|$)(.*)
-       pathType: Prefix
-       backend:
-         service:
-           name: time-backend
-           port:
-             number: 8080
+  ingressClassName: nginx
+  tls:
+    - secretName: ingress-tls
+  rules:
+  - http:
+      paths:
+      - path: /timeservice(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: time-backend
+            port:
+              number: 8080
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -47,17 +51,19 @@ metadata:
  annotations:
    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
- ingressClassName: nginx
- rules:
- - http:
-     paths:
-     - path: /authorizationservice(/|$)(.*)
-       pathType: Prefix
-       backend:
-         service:
-           name: authorization
-           port:
-             number: 8083
+  ingressClassName: nginx
+  tls:
+    - secretName: ingress-tls
+  rules:
+  - http:
+      paths:
+      - path: /authorizationservice(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: authorization
+            port:
+              number: 8083
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -67,15 +73,17 @@ metadata:
  annotations:
    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
- ingressClassName: nginx
- rules:
- - http:
-     paths:
-     - path: /vacationservice(/|$)(.*)
-       pathType: Prefix
-       backend:
-         service:
-           name: vacation-backend
-           port:
-             number: 8081
+  ingressClassName: nginx
+  tls:
+    - secretName: ingress-tls
+  rules:
+  - http:
+      paths:
+      - path: /vacationservice(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: vacation-backend
+            port:
+              number: 8081
 ---
