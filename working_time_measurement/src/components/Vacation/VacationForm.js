@@ -30,7 +30,6 @@ class VacationForm extends Component {
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8081") + "/vacation";
 
-        var hashedUsername = Cookies.get("Username");
         var token = await Token.getToken();
 
 
@@ -38,7 +37,7 @@ class VacationForm extends Component {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': ("Basic " + hashedUsername + ":" + token)
+                'Authorization': (token)
             },
             body: JSON.stringify({
                 startingDate: this.state.startingDate,

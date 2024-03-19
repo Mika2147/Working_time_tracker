@@ -31,7 +31,6 @@ class Vacation extends Component {
             url = url + "&username=" + this.state.username;
         }
 
-        var hashedUsername = Cookies.get("Username");
         var token = await Token.getToken();
 
 
@@ -39,7 +38,7 @@ class Vacation extends Component {
             method: 'GET',
             headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': ("Basic " + hashedUsername + ":" + token)
+                'Authorization': (token)
             },
         };
 
@@ -73,7 +72,6 @@ class Vacation extends Component {
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8081") + "/vacation/accept?id=" + id + "&username=" + username;
 
-        var hashedUsername = Cookies.get("Username");
         var token = await Token.getToken();
 
 
@@ -81,7 +79,7 @@ class Vacation extends Component {
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': ("Basic " + hashedUsername + ":" + token)
+                'Authorization': (token)
             },
         };
 

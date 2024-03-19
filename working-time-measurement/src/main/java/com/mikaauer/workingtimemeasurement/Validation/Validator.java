@@ -28,6 +28,7 @@ public class Validator {
             int index = token.indexOf("Bearer ") + 7;
             token = token.substring(index);
         } else {
+            System.out.println("Malformed Token");
             return false;
         }
         DecodedJWT jwt = JWT.decode(token);
@@ -44,11 +45,13 @@ public class Validator {
             Date notBefore = jwt.getNotBefore();
             Date expiresAt = jwt.getExpiresAt();
             boolean rightsCheck = needsAdminRights ? jwt.getClaim("roles").asList(String.class).contains("Admin") : true;
+            System.out.println("Access rigths fullffiled: " + rightsCheck);
             return notBefore != null && expiresAt != null
                     && now.toInstant().compareTo(notBefore.toInstant()) >= 0
                     && now.toInstant().isBefore(expiresAt.toInstant())
                     && rightsCheck;
         } catch (MalformedURLException | JwkException | SignatureVerificationException e) {
+            System.out.println(e);
             return false;
         }
     }
@@ -74,6 +77,7 @@ public class Validator {
             String username = jwt.getClaim("unique_name").asString();
             return username;
         } catch (MalformedURLException | JwkException | SignatureVerificationException e) {
+            System.out.println(e);
             throw new IllegalArgumentException("Token is not valid");
         }
     }

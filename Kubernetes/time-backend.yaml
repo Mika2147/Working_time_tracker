@@ -29,10 +29,11 @@ spec:
         app: time-backend
     spec:
       containers:
-        #- image: docker.io/mika2147/time-backend
-        - image: time-backend
+        - image: docker.io/mika2147/time-backend
+        #- image: time-backend
           name: time-backend
-          imagePullPolicy: Never
+          #imagePullPolicy: Never
+          imagePullPolicy: Always
           env:
             - name: AUTHORIZATION_SERVICE_PATH
               value: http://authorization.working-time-measurement.svc.cluster.local:8083

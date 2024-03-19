@@ -124,7 +124,7 @@ public class TimeMeasurementDatabaseConnector {
         Set<String> users = new HashSet<>();
 
         try (final MongoCursor<Document> cursorIterator = cursor.cursor()) {
-            if (cursorIterator.hasNext()) {
+            while (cursorIterator.hasNext()) {
                 Document document = cursorIterator.next();
                 String documentUsername = document.getString(DatabaseConstants.KEY_USERNAME);
 

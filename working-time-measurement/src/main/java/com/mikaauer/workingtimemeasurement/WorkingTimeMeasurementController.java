@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -87,13 +88,13 @@ public class WorkingTimeMeasurementController {
                         .body(response);
 
                 return entity;
+            }else{
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
-
-        return ResponseEntity.status(401).build();
     }
 
 
@@ -129,14 +130,17 @@ public class WorkingTimeMeasurementController {
                     return ResponseEntity.ok(workday.get());
                 }
 
-
+                return ResponseEntity.notFound().build();
+            }else{
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
 
-            return ResponseEntity.notFound().build();
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            e.printStackTrace();
         }
+
+        return ResponseEntity.badRequest().build();
 
     }
 
@@ -149,11 +153,13 @@ public class WorkingTimeMeasurementController {
                         new Validator().getUsername(authorization), body.getTasks(), body.getComment());
                 databaseConnector.insertWorkday(object);
                 return ResponseEntity.ok(object);
+            }else{
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
-            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            e.printStackTrace();
         }
+        return ResponseEntity.badRequest().build();
 
     }
 

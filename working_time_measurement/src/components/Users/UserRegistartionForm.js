@@ -96,14 +96,13 @@ class UserRegistrationForm extends Component {
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "/register";
 
-        var hashedUsername = Cookies.get("Username");
         var token = await Token.getToken();
 
         const requestOptions = {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': ("Basic " + hashedUsername + ":" + token)
+                'Authorization': (token)
             },
             body: JSON.stringify({
                 username: this.state.username,

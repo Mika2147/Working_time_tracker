@@ -85,7 +85,6 @@ class UserEditForm extends Component {
 
         var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "admin/users/" + this.state.id;
 
-        var hashedUsername = Cookies.get("Username");
         var token = await Token.getToken();
 
         let password = this.state.password.trim().length > 0 ? md5(this.state.password) : "";
@@ -94,7 +93,7 @@ class UserEditForm extends Component {
             method: 'Put',
             headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': ("Basic " + hashedUsername + ":" + token)
+                'Authorization': (token)
             },
             body: JSON.stringify({
                 id: this.state.id,

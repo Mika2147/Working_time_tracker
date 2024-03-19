@@ -100,10 +100,6 @@ class UserManagement extends Component {
         return (<React.Fragment>
             <div className='main-container'>
                 <Stack direction="vertical" gap={3} className='central_alignment'>
-                    <Link to="/users/new">
-                        <Button>New User</Button>
-                    </Link>
-
                     <Table striped bordered hover>
                         <thead>
                             <tr>

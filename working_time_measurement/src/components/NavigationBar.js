@@ -3,6 +3,7 @@ import { Navbar, Container, Nav, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { md5 } from 'js-md5';
+import { Token } from '../Token';
 
 
 class NavigationBar extends Component {
@@ -33,13 +34,12 @@ class NavigationBar extends Component {
 function logout() {
   var envUrl = process.env.REACT_APP_AUTHORIZATION_URL;
   var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "/logout";
-  const token = Cookies.get("Token");
-  var hashedUsername = Cookies.get("Username");
+  const token = Token.getToken();
 
   const requestOptions = {
     method: 'GET',
     headers: {
-      'Authorization': ("Basic " + hashedUsername + ":" + token),
+      'Authorization': (token),
     },
   };
 

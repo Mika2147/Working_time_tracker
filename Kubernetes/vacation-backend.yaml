@@ -29,10 +29,11 @@ spec:
         app: vacation-backend
     spec:
       containers:
-        - image: vacation-backend
-        #- image: docker.io/mika2147/vacation-backend
+        #- image: vacation-backend
+        - image: docker.io/mika2147/vacation-backend
           name: vacation-backend
-          imagePullPolicy: Never
+          #imagePullPolicy: Never
+          imagePullPolicy: Always
           env:
             - name: AUTHORIZATION_SERVICE_PATH
               value: http://authorization.working-time-measurement.svc.cluster.local:8083

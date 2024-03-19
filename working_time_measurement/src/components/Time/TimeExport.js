@@ -35,7 +35,6 @@ class TimeExport extends Component {
         var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/time/export/prepare";
         let state = this.state;
 
-        var hashedUsername = Cookies.get("Username");
         var token = await Token.getToken();
 
         
@@ -45,7 +44,7 @@ class TimeExport extends Component {
         const requestOptions = {
             method: 'GET',
             headers: { 
-                'Authorization': ("Basic " + hashedUsername + ":" + token),
+                'Authorization': (token),
             },
         };
 

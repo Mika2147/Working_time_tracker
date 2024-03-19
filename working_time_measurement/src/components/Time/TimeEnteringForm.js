@@ -34,7 +34,6 @@ class TimeEnteringForm extends Component {
         let state = this.state;
         const date = this.createDateFromDateString(state.date);
 
-        var hashedUsername = Cookies.get("Username");
         var token = await Token.getToken();
 
         if (date !== undefined){
@@ -46,7 +45,7 @@ class TimeEnteringForm extends Component {
             method: 'GET',
             headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': ("Basic " + hashedUsername + ":" + token),
+                'Authorization': (token),
             },
         };
 
@@ -114,7 +113,6 @@ class TimeEnteringForm extends Component {
         var envUrl = process.env.REACT_APP_TIME_URL;
         var url = (envUrl != undefined ? envUrl : "http://localhost:8080") + "/time";
 
-        var hashedUsername = Cookies.get("Username");
         var token = await Token.getToken();
 
 
@@ -122,7 +120,7 @@ class TimeEnteringForm extends Component {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': ("Basic " + hashedUsername + ":" + token)
+                'Authorization': (token)
             },
             body: JSON.stringify({
                 date: this.state.date,
