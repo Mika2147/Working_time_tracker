@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { md5 } from 'js-md5';
 import { Token } from '../Token';
+import { msalConfig } from "../Config";
+import { msalInstance } from "../index";
 
 
 class NavigationBar extends Component {
@@ -32,9 +34,21 @@ class NavigationBar extends Component {
 }
 
 function logout() {
+  const currentAccount = msalInstance.getActiveAccount();
+      if (currentAccount){
+        if(currentAccount.tenantId = msalConfig.auth.tenantId){
+          const idTokenClaims = currentAccount.idTokenClaims;
+          if (idTokenClaims && idTokenClaims.aud == msalConfig.auth.clientId){
+            msalInstance.logoutPopup();
+          }
+        }
+      }
+  /*
   var envUrl = process.env.REACT_APP_AUTHORIZATION_URL;
   var url = (envUrl != undefined ? envUrl : "http://localhost:8083") + "/logout";
   const token = Token.getToken();
+
+  
 
   const requestOptions = {
     method: 'GET',
@@ -56,6 +70,7 @@ function logout() {
         console.log("Failed to log out");
       }
     )
+    */
 }
 
 export default NavigationBar;
